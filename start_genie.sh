@@ -67,16 +67,40 @@ if [ -d "genie-tool" ]; then
     echo "tool目录内容:"
     ls -la
     
-    # 复制环境变量模板文件
-    echo "复制环境变量模板文件..."
+    # 处理环境变量
+    echo "处理环境变量..."
     if [ -f ".env_template" ] && [ ! -f ".env" ]; then
         cp .env_template .env
         echo "已复制.env_template到.env"
-        echo "注意：可能需要编辑.env文件设置正确的API密钥和其他配置"
-    elif [ -f ".env" ]; then
-        echo ".env文件已存在，跳过复制"
+    fi
+    
+    if [ -f ".env" ]; then
+        echo "更新.env文件并导出环境变量..."
+        
+        # 如果环境变量已经设置，则更新.env文件
+        if [ ! -z "$OPENAI_API_KEY" ]; then
+            echo "使用环境变量OPENAI_API_KEY更新.env文件"
+            sed -i "s|OPENAI_API_KEY=.*|OPENAI_API_KEY=${OPENAI_API_KEY}|g" .env
+        fi
+        
+        if [ ! -z "$OPENAI_BASE_URL" ]; then
+            echo "使用环境变量OPENAI_BASE_URL更新.env文件"
+            sed -i "s|OPENAI_BASE_URL=.*|OPENAI_BASE_URL=${OPENAI_BASE_URL}|g" .env
+        fi
+        
+        # 从.env文件导出所有环境变量到当前shell
+        echo "从.env文件导出环境变量..."
+        export $(grep -v '^#' .env | xargs)
+        
+        # 确保环境变量在全局范围内可用
+        echo "将环境变量添加到/etc/environment以确保在所有shell会话中可用"
+        echo "OPENAI_API_KEY=${OPENAI_API_KEY}" >> /etc/environment
+        echo "OPENAI_BASE_URL=${OPENAI_BASE_URL}" >> /etc/environment
+        echo "OPENAI_API_BASE=${OPENAI_BASE_URL}" >> /etc/environment
+        
+        echo "环境变量已导出: OPENAI_API_KEY=${OPENAI_API_KEY}, OPENAI_BASE_URL=${OPENAI_BASE_URL}, OPENAI_API_BASE=${OPENAI_BASE_URL}"
     else
-        echo "警告: .env_template文件不存在，无法创建.env文件"
+        echo "警告: .env文件不存在，无法导出环境变量"
     fi
     
     # 初始化数据库

@@ -191,6 +191,23 @@ sh start_genie_init.sh
 sh start_genie.sh
 ```
 
+## docker 一键启动服务
+
+```
+git clone https://github.com/jd-opensource/joyagent-jdgenie.git
+
+cd genie-tool
+
+修改.env.example执行工具使用的配置
+
+回到根目录
+
+docker build -t genie:latest .
+
+# -v 设置本地存储 -e 设置对话模型
+docker run -d -p 3004:3000 -p 8080:8080 -p 1601:1601 -v /Users/{user}/code/autobots/genie/genie-tool:/data/genie-tool -e OPENAI_BASE_URL="" -e OPENAI_API_KEY="" --name genie-app genie:latest
+
+```
 ## 二次开发样例
 
 ### 如何添加自己的MCP工具到JoyAgent-JDGenie中
@@ -269,6 +286,7 @@ sh start_genie.sh
 ## 贡献和合作
 
 我们是京东CHO企业信息化团队（EI），热忱欢迎开发者加入JoyAgent-JDGenie的建设！无论是完善产品和框架、修复 bug 还是添加新特性，您的贡献都非常宝贵。如需学术引用或联系，请使用以下 BibTeX：
+
 ```bibtex
 @software{JoyAgent-JDGenie,
   author = {Agent Team at JDCHO},
@@ -280,5 +298,7 @@ sh start_genie.sh
   email = {jiashilin1@jd.com;liyang.1236@jd.com;liushangkun@jd.com;tianshaohua.1@jd.com;wangzhen449@jd.com;yaoting.2@jd.com}
 }
 ```
-欢迎沟通和联系我们
+欢迎沟通和联系我们  
+![contact](./docs/img/ME1753153769883.png)
+
 ![contact](./docs/img/contact.jpg)

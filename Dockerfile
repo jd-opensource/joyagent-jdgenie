@@ -75,6 +75,8 @@ WORKDIR /app/tool
 COPY genie-tool/pyproject.toml genie-tool/uv.lock ./
 COPY genie-tool/genie_tool ./genie_tool
 COPY genie-tool/server.py genie-tool/start.sh genie-tool/.env_template ./
+
+# 创建虚拟环境并安装依赖
 RUN chmod +x start.sh && \
     uv venv .venv && \
     . .venv/bin/activate && \
@@ -86,15 +88,12 @@ RUN chmod +x start.sh && \
 # 设置数据卷
 VOLUME ["/data/genie-tool"]
 
-# 设置环境变量
-ENV PYTHONUNBUFFERED=1
-
 # 复制统一启动脚本
 WORKDIR /app
 COPY start_genie.sh .
 RUN chmod +x start_genie.sh
 
-EXPOSE 3000 8080
+EXPOSE 3000 8080 1601
 
 # 健康检查
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
