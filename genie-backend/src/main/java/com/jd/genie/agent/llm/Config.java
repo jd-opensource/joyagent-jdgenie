@@ -44,10 +44,12 @@ public class Config {
                 .model(props.getProperty("llm.default.model", "gpt-4o-0806"))
                 .maxTokens(Integer.parseInt(props.getProperty("llm.default.max_tokens", "16384")))
                 .temperature(Double.parseDouble(props.getProperty("llm.default.temperature", "0")))
+                .apiType(props.getProperty("llm.default.api_type", "openai"))
                 .baseUrl(props.getProperty("llm.default.base_url", ""))
                 .interfaceUrl(props.getProperty("llm.default.interface_url", "/v1/chat/completions"))
                 .functionCallType(props.getProperty("llm.default.function_call_type", "function_call"))
                 .apiKey(props.getProperty("llm.default.apikey", ""))
+                .apiVersion(props.getProperty("llm.default.api_version", "2025-01-01-preview"))
                 .maxInputTokens(Integer.parseInt(props.getProperty("llm.default.max_input_tokens", "100000")))
                 .build();
     }
