@@ -51,6 +51,8 @@ public class LLM {
     private final String baseUrl;
     private final String interfaceUrl;
     private final String functionCallType;
+    private final String apiType;
+    private final String apiVersion;
     private final TokenCounter tokenCounter;
     private final ObjectMapper objectMapper;
     private final Map<String, Object> extParams;
@@ -69,6 +71,8 @@ public class LLM {
         this.baseUrl = config.getBaseUrl();
         this.interfaceUrl = StringUtils.isNotEmpty(config.getInterfaceUrl()) ? config.getInterfaceUrl() : "/v1/chat/completions";
         this.functionCallType = config.getFunctionCallType();
+        this.apiType = config.getApiType();
+        this.apiVersion = config.getApiVersion();
         // 初始化 token 计数相关属性
         this.totalInputTokens = 0;
         this.maxInputTokens = config.getMaxInputTokens();
@@ -157,6 +161,24 @@ public class LLM {
         }
 
         return formattedMessages;
+    }
+
+    /**
+     * 构建API endpoint
+     */
+    private String buildApiEndpoint() {
+        if ("azure".equalsIgnoreCase(apiType)) {
+            // Azure OpenAI: https://{resource}.openai.azure.com/openai/deployments/{deployment-name}/chat/completions?api-version={api-version}
+            String endpoint = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
+            endpoint += "/openai/deployments/" + model + "/chat/completions";
+            if (StringUtils.isNotEmpty(apiVersion)) {
+                endpoint += "?api-version=" + apiVersion;
+            }
+            return endpoint;
+        } else {
+            // OpenAI
+            return baseUrl + interfaceUrl;
+        }
     }
 
     public List<Map<String, Object>> truncateMessage(AgentContext context, List<Map<String, Object>> messages, int maxInputTokens) {
@@ -565,7 +587,7 @@ public class LLM {
                     .writeTimeout(timeout, TimeUnit.SECONDS)
                     .build();
 
-            String apiEndpoint = baseUrl + interfaceUrl;
+            String apiEndpoint = buildApiEndpoint();
 
             RequestBody body = RequestBody.create(
                     MediaType.parse("application/json"),
@@ -619,7 +641,7 @@ public class LLM {
                     .writeTimeout(300, TimeUnit.SECONDS)
                     .build();
 
-            String apiEndpoint = baseUrl + interfaceUrl;
+            String apiEndpoint = buildApiEndpoint();
             RequestBody body = RequestBody.create(
                     MediaType.parse("application/json"),
                     objectMapper.writeValueAsString(params)
@@ -811,7 +833,7 @@ public class LLM {
                     .writeTimeout(300, TimeUnit.SECONDS)
                     .build();
 
-            String apiEndpoint = baseUrl + interfaceUrl;
+            String apiEndpoint = buildApiEndpoint();
             RequestBody body = RequestBody.create(
                     MediaType.parse("application/json"),
                     objectMapper.writeValueAsString(params)
@@ -1004,7 +1026,7 @@ public class LLM {
                     .writeTimeout(300, TimeUnit.SECONDS)
                     .build();
 
-            String apiEndpoint = baseUrl + interfaceUrl;
+            String apiEndpoint = buildApiEndpoint();
 
             RequestBody body = RequestBody.create(
                     MediaType.parse("application/json"),
