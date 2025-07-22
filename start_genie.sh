@@ -37,8 +37,8 @@ fi
 
 # 开始启动后端服务
 echo "尝试进入backend目录..."
-if [ -d "backend" ]; then
-    cd backend
+if [ -d "genie-backend" ]; then
+    cd genie-backend
     echo "当前目录: $(pwd)"
     echo "backend目录内容:"
     ls -la
@@ -61,8 +61,8 @@ fi
 
 # 开始启动工具服务
 echo "尝试进入tool目录..."
-if [ -d "tool" ]; then
-    cd tool
+if [ -d "genie-tool" ]; then
+    cd genie-tool
     echo "当前目录: $(pwd)"
     echo "tool目录内容:"
     ls -la
@@ -103,8 +103,8 @@ fi
 
 # 开始启动MCP服务
 echo "尝试进入client目录..."
-if [ -d "client" ]; then
-    cd client
+if [ -d "genie-client" ]; then
+    cd genie-client
     echo "当前目录: $(pwd)"
     echo "client目录内容:"
     ls -la
