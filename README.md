@@ -306,7 +306,19 @@ public class WeatherTool implements BaseTool {
 
     @Override
     public Map<String, Object> toParams() {
-        return "{\"type\":\"object\",\"properties\":{\"location\":{\"description\":\"地点\",\"type\":\"string\"}},\"required\":[\"location\"]}";
+        // example params: {\"type\":\"object\",\"properties\":{\"location\":{\"description\":\"地点\",\"type\":\"string\"}},\"required\":[\"location\"]}
+        Map<String, Object> params = new HashMap<>();
+        params.put("type", "object");
+        
+        Map<String, Object> properties = new HashMap<>();
+        Map<String, String> locationProp = new HashMap<>();
+        locationProp.put("description", "地点");
+        locationProp.put("type", "string");
+        properties.put("location", locationProp);
+        
+        params.put("properties", properties);
+        params.put("required", Arrays.asList("location"));
+        return params;
     }
 
     @Override
