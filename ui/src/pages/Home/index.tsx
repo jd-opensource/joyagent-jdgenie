@@ -75,7 +75,7 @@ const Home: GenieType.FC<HomeProps> = memo(() => {
       return (
         <div className="pt-[120px] flex flex-col items-center">
           <Slogn />
-          <div className="w-640 shadow-md rounded-xl">
+          <div className="w-640 rounded-xl shadow-[0_18px_39px_0_rgba(198,202,240,0.1)]">
             <GeneralInput
               placeholder={product.placeholder}
               showBtn={true}
@@ -89,7 +89,7 @@ const Home: GenieType.FC<HomeProps> = memo(() => {
             {productList.map((item, i) => (
               <div
                 key={i}
-                className={`flex-1 h-[36px] cursor-pointer flex items-center justify-center border rounded-[8px] ${item.type === product.type ? "border-[#4040ff] bg-[#ececf9] text-[#4040ff]" : "border-[#E9E9F0] text-[#666]"}`}
+                className={`w-[22%] h-[36px] cursor-pointer flex items-center justify-center border rounded-[8px] ${item.type === product.type ? "border-[#4040ff] bg-[rgba(64,64,255,0.02)] text-[#4040ff]" : "border-[#E9E9F0] text-[#666]"}`}
                 onClick={() => setProduct(item)}
               >
                 <i className={`font_family ${item.img} ${item.color}`}></i>

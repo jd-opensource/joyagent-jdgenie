@@ -12,7 +12,7 @@ const Slogn: GenieType.FC = () => {
     },
   };
   return (
-    <div className='py-[36px]'>
+    <div className='mb-54'>
       <Lottie options={defaultOptions}
         height={68}
         width={200}

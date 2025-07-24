@@ -354,6 +354,12 @@ sh start_genie.sh
 }
 ```
 
+## Contributors
+
+<a href="https://github.com/jd-opensource/joyagent-jdgenie/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=jd-opensource/joyagent-jdgenie" />
+</a>
+
 # Star History
 [![Star History Chart](https://api.star-history.com/svg?repos=jd-opensource/joyagent-jdgenie&type=Date&cache=false)](https://star-history.com/#jd-opensource/joyagent-jdgenie&Date)
 

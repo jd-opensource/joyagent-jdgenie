@@ -1,5 +1,5 @@
 #!/bin/bash
-chmod +x check_dependencies.sh start_genie_one_click.sh
+chmod +x Genie_start.sh
 # 颜色定义
 RED='\033[0;31m'
 GREEN='\033[0;32m'

@@ -73,6 +73,7 @@ declare global {
       img: string;
       type: string;
       placeholder: string;
+      color: string;
   }
   }
 }

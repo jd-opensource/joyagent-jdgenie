@@ -34,6 +34,7 @@ async def report(
         "markdown": markdown_report,
         "html": html_report,
     }
+    model = os.getenv("REPORT_MODEL", "gpt-4.1")
     async for chunk in report_factory[file_type](task, file_names, model):
         yield chunk
 
