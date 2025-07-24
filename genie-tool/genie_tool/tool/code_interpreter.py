@@ -15,7 +15,7 @@ from typing import List, Optional
 import pandas as pd
 import yaml
 from jinja2 import Template
-from smolagents import OpenAIServerModel, FinalAnswerStep, PythonInterpreterTool, ChatMessageStreamDelta
+from smolagents import LiteLLMModel, FinalAnswerStep, PythonInterpreterTool, ChatMessageStreamDelta
 
 from genie_tool.tool.ci_agent import CIAgent
 from genie_tool.util.file_util import download_all_files_in_path, upload_file, upload_file_by_path
@@ -158,10 +158,8 @@ def create_ci_agent(
     return_full_result: bool = True,
     output_dir: str = "",
 ) -> CIAgent:
-    model = OpenAIServerModel(
+    model = LiteLLMModel(
         max_tokens=max_tokens,
-        api_base=os.getenv("OPENAI_API_BASE"),
-        api_key=os.getenv("OPENAI_API_KEY"),
         model_id=os.getenv("CODE_INTEPRETER_MODEL","gpt-4.1")
     )
 

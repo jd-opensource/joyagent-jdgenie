@@ -194,7 +194,7 @@ JoyAgent-JDGenie是一个通用的多智能体框架，对于用户需要定制�
   - 多智能体上下文管理
   - 高并发DAG执行引擎，极致的执行效率
 - **子智能体和工具**
-  - 子Agent和工具可插拔：预制多种子智能体和工具
+  - 子Agent和工具可插拔：预置多种子智能体和工具
   - 多种文件交付样式：html、ppt、markdown
   - plan和工具调用 RL优化迭代
   - 全链路流式输出
@@ -353,6 +353,12 @@ sh start_genie.sh
   email = {jiashilin1@jd.com;liyang.1236@jd.com;liushangkun@jd.com;tianshaohua.1@jd.com;wangzhen449@jd.com;yaoting.2@jd.com}
 }
 ```
+
+## Contributors
+
+<a href="https://github.com/jd-opensource/joyagent-jdgenie/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=jd-opensource/joyagent-jdgenie" />
+</a>
 
 # Star History
 [![Star History Chart](https://api.star-history.com/svg?repos=jd-opensource/joyagent-jdgenie&type=Date&cache=false)](https://star-history.com/#jd-opensource/joyagent-jdgenie&Date)
