@@ -245,8 +245,15 @@ docker run -d -p 3000:3000 -p 8080:8080 -p 1601:1601 -e OPENAI_BASE_URL="" -e OP
   - uv sync
   - source .venv/bin/activate
 
-#### step by step部署手册
-参考 [Step by Step](./Deploy.md)
+#### 方案1：手动step by step部署手册
+手动超详细攻略参考 [Step by Step](./Deploy.md)
+
+#### 方案2：手动一键启动部署
+直接通过shell启动所有服务
+```
+sh check_dep_port.sh # 检查所有依赖和端口占用情况
+sh Genie_start.sh  # 直接启动，以后改动配置直接重启动脚本即可，control+c 一键kill所有服务
+```
 
 ## 二次开发
 
@@ -348,7 +355,7 @@ sh start_genie.sh
 ```
 
 # Star History
-[![Star History Chart](https://api.star-history.com/svg?repos=jd-opensource/joyagent-jdgenie&type=Date)](https://www.star-history.com/#jd-opensource/joyagent-jdgenie&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=jd-opensource/joyagent-jdgenie&type=Date&cache=false)](https://star-history.com/#jd-opensource/joyagent-jdgenie&Date)
 
 欢迎沟通和联系我们  
 ![contact](./docs/img/ME1753153769883.png)
