@@ -224,7 +224,7 @@ git clone https://github.com/jd-opensource/joyagent-jdgenie.git
 
 cd genie-tool
 
-修改.env.example执行工具使用的配置
+修改.env_template执行工具使用的配置
 
 回到根目录
 
