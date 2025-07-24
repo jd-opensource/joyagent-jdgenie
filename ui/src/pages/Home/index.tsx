@@ -22,24 +22,24 @@ const Home: GenieType.FC<HomeProps> = memo(() => {
 
   const CaseCard = ({ title, description, tag, image, url, videoUrl }: any) => {
     return (
-      <div className="flex flex-col rounded-lg bg-white pt-16 px-16 shadow-sm hover:shadow-md transition-shadow duration-300 w-full max-w-xs">
+      <div className="group flex flex-col rounded-lg bg-white pt-16 px-16 shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:-translate-y-[5px] transition-all duration-300 ease-in-out cursor-pointer w-full max-w-xs border border-[rgba(233,233,240,1)]">
         <div className="mb-4 flex items-center justify-between">
           <div className="text-[14px] font-bold truncate">{title}</div>
-          <div className="shrink-0 inline-block bg-gray-100 text-gray-600 p-4 text-[12px] rounded-[6px]">
+          <div className="shrink-0 inline-block bg-gray-100 text-gray-600 px-[6px] leading-[20px] text-[12px] rounded-[4px]">
             {tag}
           </div>
         </div>
-        <div className="text-sm text-gray-600 h-40 line-clamp-2 leading-[20px]">
+        <div className="text-[12px] text-[#71717a] h-40 line-clamp-2 leading-[20px]">
           {description}
         </div>
         <div
-          className="text-blue-500 flex items-center mb-6 cursor-pointer hover:text-blue-600 transition-colors duration-200"
+          className="text-[#4040ff] group-hover:text-[#656cff] text-[12px] flex items-center mb-6 cursor-pointer transition-colors duration-200"
           onClick={() => window.open(url)}
         >
           <span className="mr-1">查看报告</span>
           <i className="font_family icon-xinjianjiantou"></i>
         </div>
-        <div className="relative rounded-t-[10px] overflow-hidden h-100">
+        <div className="relative rounded-t-[10px] overflow-hidden h-100 group-hover:scale-105 transition-transform duration-500 ease">
           <Image
             style={{ display: "none" }}
             preview={{
@@ -60,7 +60,7 @@ const Home: GenieType.FC<HomeProps> = memo(() => {
             className="w-full h-full rounded-t-[10px] mt-[-20px]"
           ></img>
           <div
-            className="absolute inset-0 flex items-center justify-center cursor-pointer rounded-t-[10px] group hover:bg-[rgba(0,0,0,0.6)]"
+            className="absolute inset-0 flex items-center justify-center cursor-pointer rounded-t-[10px] group hover:bg-[rgba(0,0,0,0.6)] border border-[#ededed]"
             onClick={() => setVideoModalOpen(videoUrl)}
           >
             <i className="font_family icon-bofang hidden group-hover:block text-[#fff] text-[24px]"></i>
@@ -85,11 +85,11 @@ const Home: GenieType.FC<HomeProps> = memo(() => {
               send={changeInputInfo}
             />
           </div>
-          <div className="w-640 flex justify-between mt-[16px]">
+          <div className="w-640 flex flex-wrap gap-16 mt-[16px]">
             {productList.map((item, i) => (
               <div
                 key={i}
-                className={`w-[22%] h-[36px] cursor-pointer flex items-center justify-center border rounded-[8px] ${item.type === product.type ? "border-[#4040ff] bg-[#ececf9] text-[#4040ff]" : "border-[#E9E9F0] text-[#666]"}`}
+                className={`flex-1 h-[36px] cursor-pointer flex items-center justify-center border rounded-[8px] ${item.type === product.type ? "border-[#4040ff] bg-[#ececf9] text-[#4040ff]" : "border-[#E9E9F0] text-[#666]"}`}
                 onClick={() => setProduct(item)}
               >
                 <i className={`font_family ${item.img} ${item.color}`}></i>

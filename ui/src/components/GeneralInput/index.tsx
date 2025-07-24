@@ -97,7 +97,7 @@ const GeneralInput: GenieType.FC<Props> = (props) => {
             value={question}
             placeholder={placeholder}
             className={classNames(
-              "h-106 no-border-textarea border-0 resize-none p-[0px] focus:border-0 bg-[#fff]",
+              "h-56 no-border-textarea border-0 resize-none p-[0px] focus:border-0 bg-[#fff]",
               showBtn && product ? "indent-86" : ""
             )}
             onChange={questionChange}
@@ -116,7 +116,7 @@ const GeneralInput: GenieType.FC<Props> = (props) => {
             }}
           />
           {showBtn && product ? (
-            <div className="h-[24px] w-[80px] absolute top-0 left-0 flex items-center justify-center rounded-[8px] bg-[#f4f4f9] text-[12px] ">
+            <div className="h-[24px] w-[80px] absolute top-0 left-0 flex items-center justify-center rounded-[8px] bg-[#f4f4f9] text-[12px] text-[#27272A]">
               <i className={`font_family ${product.img}`}></i>
               <div className="ml-[6px]">{product.name}</div>
             </div>
