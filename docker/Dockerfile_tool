@@ -1,0 +1,22 @@
+FROM docker.m.daocloud.io/library/python:3.11-slim
+WORKDIR /app
+RUN sed -i 's/deb.debian.org/mirrors.huaweicloud.com/g' /etc/apt/sources.list.d/debian.sources
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    netcat-openbsd \
+    procps \
+    curl \
+    && rm -rf /var/lib/apt/lists/* 
+RUN pip install uv -i https://mirrors.aliyun.com/pypi/simple/
+COPY genie-tool ./
+RUN uv venv .venv && \
+    . .venv/bin/activate && \
+    chmod +x start.sh && \
+    uv pip install . -i https://mirrors.aliyun.com/pypi/simple/ && \
+    mkdir -p /data/genie-tool && \
+    cp .env_template .env && \
+    python -m genie_tool.db.db_engine
+VOLUME ["/data/genie-tool"]
+CMD ["./start.sh"]
+
