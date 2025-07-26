@@ -1,0 +1,20 @@
+FROM docker.m.daocloud.io/library/maven:3.8-openjdk-17 as backend-builder
+WORKDIR /app
+COPY genie-backend ./
+
+RUN echo '<settings>\
+  <mirrors>\
+    <mirror>\
+      <id>aliyun</id>\
+      <url>https://maven.aliyun.com/repository/public</url>\
+      <mirrorOf>*</mirrorOf>\
+    </mirror>\
+  </mirrors>\
+</settings>' > aliyun-settings.xml && \
+    mvn clean package -DskipTests -s aliyun-settings.xml
+
+FROM docker.m.daocloud.io/library/maven:3.8-openjdk-17
+WORKDIR /app
+COPY --from=backend-builder /app/start.sh ./
+COPY --from=backend-builder /app/target/genie-backend ./
+CMD ["sh", "start.sh"]

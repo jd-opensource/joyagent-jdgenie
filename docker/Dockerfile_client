@@ -1,0 +1,16 @@
+FROM docker.m.daocloud.io/library/python:3.11-slim
+WORKDIR /app
+RUN sed -i 's/deb.debian.org/mirrors.huaweicloud.com/g' /etc/apt/sources.list.d/debian.sources
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    netcat-openbsd \
+    procps \
+    curl \
+    && rm -rf /var/lib/apt/lists/* 
+RUN pip install uv -i https://mirrors.aliyun.com/pypi/simple/
+COPY genie-client ./
+RUN uv venv .venv && \
+    . .venv/bin/activate && \
+    uv pip install -r pyproject.toml -i https://mirrors.aliyun.com/pypi/simple/
+CMD ["uv", "run", "server.py"]

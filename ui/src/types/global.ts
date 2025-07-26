@@ -34,5 +34,6 @@ declare global {
 
   interface Window {
     SERVICE_BASE_URL: string;
+    SERVER_BASE_URL: string;
   }
 }

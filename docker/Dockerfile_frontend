@@ -1,0 +1,25 @@
+FROM docker.m.daocloud.io/library/node:20-alpine as frontend-builder
+WORKDIR /app
+RUN npm install -g pnpm --registry=https://registry.npmmirror.com && \
+    pnpm config set registry https://registry.npmmirror.com
+COPY ui /app/ui
+RUN cd ui && \
+    pnpm install && \
+    pnpm build
+RUN { \
+    echo '#!/bin/sh'; \
+    echo 'set -e'; \
+    echo 'if [ -f /usr/share/nginx/html/config.js ]; then'; \
+    echo '    echo "Replacing SERVER_BASE_URL with: $SERVER_BASE_URL"'; \
+    echo '    envsubst '"'"'${SERVER_BASE_URL}'"'"' < /usr/share/nginx/html/config.js > /tmp/config.js'; \
+    echo '    mv /tmp/config.js /usr/share/nginx/html/config.js'; \
+    echo 'fi'; \
+    echo 'exec nginx -g "daemon off;"'; \
+} > /docker-entrypoint.sh
+
+FROM nginx
+COPY --from=frontend-builder /app/ui/dist/ /usr/share/nginx/html/
+COPY --from=frontend-builder /docker-entrypoint.sh /docker-entrypoint.sh
+ENV SERVER_BASE_URL=http://127.0.0.1:8080
+RUN chmod +x /docker-entrypoint.sh
+ENTRYPOINT ["/docker-entrypoint.sh"]
