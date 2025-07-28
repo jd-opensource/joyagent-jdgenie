@@ -321,7 +321,13 @@ public class WeatherTool implements BaseTool {
 
     @Override
     public Map<String, Object> toParams() {
-        return "{\"type\":\"object\",\"properties\":{\"location\":{\"description\":\"地点\",\"type\":\"string\"}},\"required\":[\"location\"]}";
+        String json = "{\"type\":\"object\",\"properties\":{\"location\":{\"description\":\"地点\",\"type\":\"string\"}},\"required\":[\"location\"]}";
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.readValue(json, new TypeReference<Map<String, Object>>() {});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
