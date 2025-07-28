@@ -10,11 +10,11 @@ logging:
     root: INFO
 llm:
   default:
-    base_url: '<input llm server here>'
-    apikey: '<input llm key here>'
+    base_url: 'http://ai-gateway.maipuat.msxf.test/witwx4/voyt1l/maip/deepseek-r1-32b-bf16-32k/'
+    apikey: 'Bearer sk-e5e8edc557bc48efbc98'
     interface_url: '/chat/completions'
     model: gpt-4.1
-    max_tokens: 16384
+    max_tokens: 8192
   settings: '{"claude-3-7-sonnet-v1": {
         "model": "claude-3-7-sonnet-v1",
         "max_tokens": 8192,
