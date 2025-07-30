@@ -391,6 +391,8 @@ For academic references or inquiries, please use the following BibTeX entry:：
 [![Star History Chart](https://api.star-history.com/svg?repos=jd-opensource/joyagent-jdgenie&type=Date&cache=false)](https://star-history.com/#jd-opensource/joyagent-jdgenie&Date)
 
 Contact Us  
-![contact](./docs/img/ME1753153769883.png)
+
+[//]: # (![contact]&#40;./docs/img/ME1753153769883.png&#41;)
+![contact](./docs/img/wechat2.png)
 
 [//]: # (![contact]&#40;./docs/img/contact.jpg&#41;)
