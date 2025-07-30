@@ -1,0 +1,73 @@
+# 第一阶段：构建后端应用
+FROM docker.m.daocloud.io/library/maven:3.8-openjdk-17 as backend-builder
+
+WORKDIR /app
+
+# 复制后端源码
+COPY genie-backend ./
+
+# 配置Maven国内镜像源，加速构建
+RUN echo '<settings>\
+  <mirrors>\
+    <mirror>\
+      <id>aliyun</id>\
+      <url>https://maven.aliyun.com/repository/public</url>\
+      <mirrorOf>*</mirrorOf>\
+    </mirror>\
+  </mirrors>\
+  <profiles>\
+    <profile>\
+      <id>default</id>\
+      <activation>\
+        <activeByDefault>true</activeByDefault>\
+      </activation>\
+      <properties>\
+        <maven.compiler.source>17</maven.compiler.source>\
+        <maven.compiler.target>17</maven.compiler.target>\
+      </properties>\
+    </profile>\
+  </profiles>\
+</settings>' > aliyun-settings.xml
+
+# 构建应用
+RUN mvn clean package -DskipTests -s aliyun-settings.xml
+
+# 第二阶段：生产镜像
+FROM openjdk:17-slim
+
+WORKDIR /app
+
+RUN cat /etc/apt/sources.list
+RUN sed -i 's/deb.debian.org/mirrors.huaweicloud.com/g' /etc/apt/sources.list
+
+# 安装必要的工具
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    curl \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+
+# 复制构建产物和启动脚本
+COPY --from=backend-builder /app/start.sh ./start.sh
+COPY --from=backend-builder /app/target/genie-backend ./genie-backend
+
+# 设置执行权限
+RUN chmod +x start.sh && \
+    chmod +x genie-backend/bin/start.sh
+
+# 创建日志目录
+RUN mkdir -p /app/logs
+
+# 设置环境变量
+ENV JAVA_OPTS="-Xms512m -Xmx2g -XX:+UseG1GC -XX:+UseStringDeduplication"
+ENV APP_NAME="genie-backend"
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD curl -f http://localhost:8080/web/health || exit 1
+
+# 暴露端口
+EXPOSE 8080
+
+# 启动服务
+CMD ["sh", "start.sh"]

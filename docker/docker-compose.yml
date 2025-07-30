@@ -1,0 +1,210 @@
+# =========================================
+# Genie AI Assistant - Docker Compose Configuration
+# Based on Dify's best practices
+# =========================================
+
+# Shared environment configuration for all services
+x-shared-llm-env: &shared-llm-env
+  # Core LLM Configuration
+  LLM_BASE_URL: ${LLM_BASE_URL}
+  LLM_APIKEY: ${LLM_API_KEY}
+  LLM_INTERFACE_URL: ${LLM_INTERFACE_URL}
+  LLM_MODEL: ${LLM_MODEL}
+
+  # Settings for backend compatibility
+  SETTINGS_LLM_NAME: ${LLM_MODEL}
+  SETTINGS_LLM_MODEL: ${LLM_MODEL}
+  SETTINGS_LLM_BASE_URL: ${LLM_BASE_URL}
+  SETTINGS_LLM_APIKEY: ${LLM_API_KEY}
+  SETTINGS_LLM_INTERFACE_URL: ${LLM_INTERFACE_URL}
+
+  # Agent models
+  PLANNER_MODEL: ${PLANNER_MODEL}
+  EXECUTOR_MODEL: ${EXECUTOR_MODEL}
+  REACT_MODEL: ${REACT_MODEL}
+  SUMMARY_MODEL: ${SUMMARY_MODEL}
+
+
+# Common service configuration
+x-common-service: &common-service
+  restart: unless-stopped
+  networks:
+    - genie-network
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+services:
+  # ===================
+  # Frontend Service (Nginx + React)
+  # ===================
+  genie-frontend:
+    <<: *common-service
+    build:
+      context: ..
+      dockerfile: docker/dockerfile/Dockerfile_frontend
+      args:
+        - NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+    container_name: genie-frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+      - "${FRONTEND_SSL_PORT:-3443}:443"
+    environment:
+      - SERVER_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+    depends_on:
+      genie-backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
+      interval: ${HEALTH_CHECK_INTERVAL:-30s}
+      timeout: ${HEALTH_CHECK_TIMEOUT:-10s}
+      retries: ${HEALTH_CHECK_RETRIES:-3}
+      start_period: 30s
+
+  # ===================
+  # Backend Service (Java Spring Boot)
+  # ===================
+  genie-backend:
+    <<: *common-service
+    build:
+      context: ..
+      dockerfile: docker/dockerfile/Dockerfile_backend
+    container_name: genie-backend
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    environment:
+      <<: *shared-llm-env
+      # Service communication
+      GENIE_TOOL_URL: ${GENIE_TOOL_URL}
+      GENIE_MCP_CLIENT_URL: ${GENIE_CLIENT_URL}
+      GENIE_MCP_SERVER_URL: ${GENIE_MCP_SERVER_URL}
+
+      # Application settings
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      DEBUG: ${DEBUG:-false}
+    depends_on:
+      genie-tool:
+        condition: service_healthy
+      genie-client:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/web/health"]
+      interval: ${HEALTH_CHECK_INTERVAL:-30s}
+      timeout: ${HEALTH_CHECK_TIMEOUT:-10s}
+      retries: ${HEALTH_CHECK_RETRIES:-3}
+      start_period: 30s
+    volumes:
+      # For temporary file processing
+      - genie-backend-tmp:/tmp
+
+  # ===================
+  # MCP Client Service (Python)
+  # ===================
+  genie-client:
+    <<: *common-service
+    build:
+      context: ..
+      dockerfile: docker/dockerfile/Dockerfile_client
+    container_name: genie-client
+    ports:
+      - "${CLIENT_PORT:-8188}:8188"
+    environment:
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      DEBUG: ${DEBUG:-false}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8188/health"]
+      interval: ${HEALTH_CHECK_INTERVAL:-30s}
+      timeout: ${HEALTH_CHECK_TIMEOUT:-10s}
+      retries: ${HEALTH_CHECK_RETRIES:-3}
+      start_period: 30s
+
+  # ===================
+  # Tool Service (Python - AI Tools & Search)
+  # ===================
+  genie-tool:
+    <<: *common-service
+    build:
+      context: ..
+      dockerfile: docker/dockerfile/Dockerfile_tool
+    container_name: genie-tool
+    ports:
+      - "${TOOL_PORT:-1601}:1601"
+    environment:
+      # Merge both shared configurations
+      <<: *shared-llm-env
+      # Tool-specific configuration
+      OPENAI_API_KEY: ${LLM_API_KEY}
+      OPENAI_BASE_URL: ${LLM_BASE_URL}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+      DEFAULT_MODEL: ${DEFAULT_MODEL}
+
+      # Search configuration
+      USE_SEARCH_ENGINE: ${USE_SEARCH_ENGINE}
+      SEARCH_COUNT: ${SEARCH_COUNT}
+      SEARCH_TIMEOUT: ${SEARCH_TIMEOUT}
+      SEARCH_THREAD_NUM: ${SEARCH_THREAD_NUM}
+      SERPER_SEARCH_URL: ${SERPER_SEARCH_URL}
+      SERPER_SEARCH_API_KEY: ${SERPER_SEARCH_API_KEY}
+
+      # Model configurations for different tools
+      QUERY_DECOMPOSE_MODEL: ${QUERY_DECOMPOSE_MODEL}
+      QUERY_DECOMPOSE_THINK_MODEL: ${QUERY_DECOMPOSE_THINK_MODEL}
+      SEARCH_REASONING_MODEL: ${SEARCH_REASONING_MODEL}
+      SEARCH_ANSWER_MODEL: ${SEARCH_ANSWER_MODEL}
+      REPORT_MODEL: ${REPORT_MODEL}
+      CODE_INTERPRETER_MODEL: ${CODE_INTERPRETER_MODEL}
+
+      # File storage configuration
+      FILE_SAVE_PATH: ${FILE_SAVE_PATH}
+      SQLITE_DB_PATH: ${SQLITE_DB_PATH}
+      FILE_SERVER_URL: http://${SERVER_HOST}:${TOOL_PORT}/v1/file_tool
+
+      # Application settings
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      DEBUG: ${DEBUG:-false}
+    volumes:
+      # Persistent data storage
+      - genie-tool-data:/data/genie-tool
+      - genie-tool-logs:/app/logs
+      # File database for session management
+      - genie-file-db:/app/file_db_dir
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "1601"]
+      interval: ${HEALTH_CHECK_INTERVAL:-30s}
+      timeout: ${HEALTH_CHECK_TIMEOUT:-10s}
+      retries: ${HEALTH_CHECK_RETRIES:-3}
+      start_period: 30s
+
+# ===================
+# Networks
+# ===================
+networks:
+  genie-network:
+    name: ${COMPOSE_PROJECT_NAME:-genie}_network
+    driver: bridge
+
+# ===================
+# Volumes (Persistent Data)
+# ===================
+volumes:
+  # Backend temporary files
+  genie-backend-tmp:
+    name: ${COMPOSE_PROJECT_NAME:-genie}_backend_tmp
+    driver: local
+
+  # Tool service data
+  genie-tool-data:
+    name: ${COMPOSE_PROJECT_NAME:-genie}_tool_data
+    driver: local
+
+  # Tool service logs
+  genie-tool-logs:
+    name: ${COMPOSE_PROJECT_NAME:-genie}_tool_logs
+    driver: local
+
+  # File database for document processing
+  genie-file-db:
+    name: ${COMPOSE_PROJECT_NAME:-genie}_file_db
+    driver: local

@@ -1,9 +1,14 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { showMessage } from './utils';
 
+// 获取运行时配置的服务器地址
+const getServerBaseUrl = () => {
+  return (window as any).APP_CONFIG?.SERVER_BASE_URL || 'http://127.0.0.1:8080';
+};
+
 // 创建axios实例
 const request: AxiosInstance = axios.create({
-  baseURL: SERVICE_BASE_URL,
+  baseURL: getServerBaseUrl(),
   timeout: 10000,
   headers: {'Content-Type': 'application/json',},
 });

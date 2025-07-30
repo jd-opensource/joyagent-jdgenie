@@ -1,0 +1,51 @@
+# 第一阶段：构建前端应用
+FROM docker.m.daocloud.io/library/node:20-alpine as frontend-builder
+
+WORKDIR /app
+
+# 配置npm镜像源，加速构建
+RUN npm install -g pnpm --registry=https://registry.npmmirror.com && \
+    pnpm config set registry https://registry.npmmirror.com
+
+# 复制前端源码
+COPY ui /app/ui
+
+# 构建前端应用
+RUN cd ui && \
+    pnpm install && \
+    pnpm build
+
+# 创建启动脚本，支持环境变量替换
+RUN { \
+    echo '#!/bin/sh'; \
+    echo 'set -e'; \
+    echo 'if [ -f /usr/share/nginx/html/config.js ]; then'; \
+    echo '    echo "Replacing SERVER_BASE_URL with: $SERVER_BASE_URL"'; \
+    echo '    envsubst '"'"'${SERVER_BASE_URL}'"'"' < /usr/share/nginx/html/config.js > /tmp/config.js'; \
+    echo '    mv /tmp/config.js /usr/share/nginx/html/config.js'; \
+    echo 'fi'; \
+    echo 'exec nginx -g "daemon off;"'; \
+} > /docker-entrypoint.sh
+
+# 第二阶段：生产镜像
+FROM nginx:alpine
+
+# 复制构建产物和启动脚本
+COPY --from=frontend-builder /app/ui/dist/ /usr/share/nginx/html/
+COPY --from=frontend-builder /docker-entrypoint.sh /docker-entrypoint.sh
+
+# 设置默认环境变量
+ENV SERVER_BASE_URL=http://127.0.0.1:8080
+
+# 设置脚本权限
+RUN chmod +x /docker-entrypoint.sh
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost/ || exit 1
+
+# 暴露端口
+EXPOSE 80
+
+# 启动服务
+ENTRYPOINT ["/docker-entrypoint.sh"]

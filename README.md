@@ -224,7 +224,82 @@ JoyAgent-JDGenie是一个通用的多智能体框架，对于用户需要定制�
 
 ## 快速开始
 
-### 方式1: docker 一键启动服务
+### 方式1: Docker Compose 一键部署 (推荐)
+
+> 🎉 **新增功能**：使用 Docker Compose 一键部署！更简单、更可靠、更易维护。
+
+#### 环境要求
+- **Docker**: 20.10+
+- **Docker Compose**: 2.0+
+- **系统内存**: 4GB+ (推荐 8GB+)
+- **可用存储**: 10GB+
+
+#### 快速部署步骤
+
+**1️⃣ 克隆项目**
+```bash
+git clone https://github.com/jd-opensource/joyagent-jdgenie.git
+cd joyagent-jdgenie
+```
+
+**2️⃣ 修改 .env 文件**
+```bash
+# 复制环境变量模板
+cd docker
+cp .env.example .env
+
+# 编辑配置文件
+vim .env
+```
+
+**3️⃣ 一键启动**
+```bash
+docker compose up -d
+```
+
+检查服务状态
+```bash
+$ docker compose ps
+NAME                IMAGE                     COMMAND                  SERVICE             CREATED             STATUS                    PORTS
+genie-backend       genie-ai-genie-backend    "sh start.sh"            genie-backend       56 minutes ago      Up 55 minutes (healthy)   0.0.0.0:18080->8080/tcp, :::8080->8080/tcp
+genie-client        genie-ai-genie-client     "uv run server.py"       genie-client        56 minutes ago      Up 56 minutes (healthy)   0.0.0.0:8188->8188/tcp, :::8188->8188/tcp
+genie-frontend      genie-ai-genie-frontend   "/docker-entrypoint.…"   genie-frontend      56 minutes ago      Up 55 minutes (healthy)   0.0.0.0:3000->80/tcp, :::3000->80/tcp, 0.0.0.0:3443->443/tcp, :::3443->443/tcp
+genie-tool          genie-ai-genie-tool       "./entrypoint.sh"        genie-tool          56 minutes ago      Up 56 minutes (healthy)   0.0.0.0:1601->1601/tcp, :::1601->1601/tcp
+```
+
+**4️⃣ 访问服务**
+- 🌐 **前端页面**: http://your-ip:3000
+- 🔧 **后端API**: http://your-ip:8080
+- 🐍 **Python客户端**: http://your-ip:8188  
+- 🛠️ **工具服务**: http://your-ip:1601
+
+#### 管理命令
+```bash
+# 查看服务状态
+docker compose ps
+
+# 查看日志
+docker compose logs -f
+
+# 重启服务
+docker compose restart
+
+# 停止服务
+docker compose down
+
+# 更新部署 (重新构建镜像)
+docker compose up -d --build
+```
+
+#### 配置说明
+- 所有服务配置通过环境变量管理，无需手动修改配置文件
+- 数据持久化存储在Docker volumes中
+- 支持健康检查和自动重启
+- 网络自动配置，服务间通信无需额外配置
+
+> 💡 **提示**: Docker Compose部署方式具有更好的隔离性、可移植性和维护性，推荐用于生产环境。
+
+### 方式2: docker 一键启动服务
 
 ```
 1. git clone https://github.com/jd-opensource/joyagent-jdgenie.git
@@ -245,7 +320,7 @@ docker run -d -p 3000:3000 -p 8080:8080 -p 1601:1601 --name genie-app genie:late
 ```
 如果部署遇到问题，可以参考视频:【5分钟使用deepseek启动开源智能体应用joyagent-genie-哔哩哔哩】 https://b23.tv/8VQDBOK
 
-### 方式2: 手动初始化环境，启动服务
+### 方式3: 手动初始化环境，启动服务
 
 #### 环境准备
 - jdk17
