@@ -42,7 +42,7 @@ public class FileTool implements BaseTool {
 
         GenieConfig genieConfig = SpringContextHolder.getApplicationContext().getBean(GenieConfig.class);
         if (!genieConfig.getFileToolDesc().isEmpty()) {
-            return genieConfig.getFileToolPamras();
+            return genieConfig.getFileToolParams();
         }
 
         Map<String, Object> command = new HashMap<>();

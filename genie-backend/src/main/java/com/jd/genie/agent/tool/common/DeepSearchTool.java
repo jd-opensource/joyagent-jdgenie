@@ -48,8 +48,8 @@ public class DeepSearchTool implements BaseTool {
     public Map<String, Object> toParams() {
 
         GenieConfig genieConfig = SpringContextHolder.getApplicationContext().getBean(GenieConfig.class);
-        if (!genieConfig.getDeepSearchToolPamras().isEmpty()) {
-            return genieConfig.getDeepSearchToolPamras();
+        if (!genieConfig.getDeepSearchToolParams().isEmpty()) {
+            return genieConfig.getDeepSearchToolParams();
         }
 
         Map<String, Object> taskParam = new HashMap<>();
