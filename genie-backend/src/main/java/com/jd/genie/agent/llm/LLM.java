@@ -267,7 +267,7 @@ public class LLM {
                 return callOpenAIStream(params);
             }
         } catch (Exception e) {
-            log.error("{} Unexpected error in ask: {}", e.getMessage(), e);
+            log.error("{} Unexpected error in ask: ", e.getMessage(), e);
             CompletableFuture<String> future = new CompletableFuture<>();
             future.completeExceptionally(e);
             return future;
