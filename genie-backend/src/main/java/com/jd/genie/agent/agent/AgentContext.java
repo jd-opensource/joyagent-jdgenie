@@ -3,8 +3,6 @@ package com.jd.genie.agent.agent;
 import com.jd.genie.agent.dto.File;
 import com.jd.genie.agent.printer.Printer;
 import com.jd.genie.agent.tool.ToolCollection;
-import com.jd.genie.model.dto.FileInformation;
-import com.jd.genie.model.req.AgentRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
