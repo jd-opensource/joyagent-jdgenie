@@ -367,7 +367,7 @@ show_service_info() {
     echo -e "${YELLOW}💡 提示：${NC}"
     echo -e "  - 使用 Ctrl+C 停止所有服务"
     echo -e "  - 查看日志: tail -f genie-backend/genie-backend_startup.log"
-    echo -e "  - 重新启动: ./start_genie_one_click.sh"
+    echo -e "  - 重新启动: ./start_genie.sh"
     echo "=================================="
 }
 
