@@ -1,7 +1,11 @@
 import { fetchEventSource, EventSourceMessage } from '@microsoft/fetch-event-source';
 
-const customHost = SERVICE_BASE_URL || '';
-const DEFAULT_SSE_URL = `${customHost}/web/api/v1/gpt/queryAgentStreamIncr`;
+// 获取运行时配置的服务器地址
+const getServerBaseUrl = () => {
+  return (window as any).APP_CONFIG?.SERVER_BASE_URL || 'http://127.0.0.1:8080';
+};
+
+const DEFAULT_SSE_URL = `${getServerBaseUrl()}/web/api/v1/gpt/queryAgentStreamIncr`;
 
 const SSE_HEADERS = {
   'Content-Type': 'application/json',

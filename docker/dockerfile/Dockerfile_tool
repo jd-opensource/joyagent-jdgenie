@@ -1,0 +1,69 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# 更新 apt 镜像为国内源
+RUN sed -i 's/deb.debian.org/mirrors.huaweicloud.com/g' /etc/apt/sources.list.d/debian.sources
+
+# 安装系统依赖和 venv
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    netcat-openbsd \
+    procps \
+    curl \
+    sqlite3 \
+    python3-venv \
+    && rm -rf /var/lib/apt/lists/*
+
+# 安装 uv 包管理器
+RUN pip install -U uv -i https://mirrors.aliyun.com/pypi/simple/
+
+# 复制源码
+COPY genie-tool ./
+
+# 使用系统 Python 创建虚拟环境，安装依赖
+RUN python3 -m venv .venv && \
+    . .venv/bin/activate && \
+    chmod +x start.sh && \
+    uv pip install . -i https://mirrors.aliyun.com/pypi/simple/
+
+# 创建必要目录
+RUN mkdir -p /data/genie-tool /app/logs /app/file_db_dir
+
+# 初始化数据库（如果模板存在）
+RUN if [ -f .env_template ]; then cp .env_template .env; fi && \
+    . .venv/bin/activate && \
+    python -m genie_tool.db.db_engine
+
+# 设置环境变量
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+ENV FILE_SAVE_PATH=file_db_dir
+ENV SQLITE_DB_PATH=autobots.db
+
+# 创建启动脚本
+RUN echo '#!/bin/bash\n\
+. .venv/bin/activate\n\
+mkdir -p /data/genie-tool file_db_dir logs\n\
+if [ ! -f "autobots.db" ]; then\n\
+    echo "Initializing database..."\n\
+    python -m genie_tool.db.db_engine\n\
+fi\n\
+echo "Starting genie-tool service..."\n\
+python server.py' > entrypoint.sh && \
+    chmod +x entrypoint.sh
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD nc -z localhost 1601 || exit 1
+
+# 声明数据卷
+VOLUME ["/data/genie-tool", "/app/file_db_dir", "/app/logs"]
+
+# 暴露端口
+EXPOSE 1601
+
+# 启动命令
+CMD ["./entrypoint.sh"]
+

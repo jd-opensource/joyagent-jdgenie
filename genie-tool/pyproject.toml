@@ -1,5 +1,9 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
-name = "python"
+name = "genie-tool"
 version = "0.1.0"
 description = "Genie Tools"
 readme = "README.md"
@@ -24,3 +28,12 @@ dependencies = [
     "sse-starlette>=2.4.1",
     "uvicorn>=0.35.0",
 ]
+
+[tool.setuptools]
+# 明确指定只包含genie_tool包，排除logs和file_db_dir目录
+packages = ["genie_tool"]
+
+[tool.setuptools.package-data]
+# 如果需要包含非Python文件，可以在这里指定
+"genie_tool" = ["*.yaml", "*.yml", "*.json", "*.txt"]
+
