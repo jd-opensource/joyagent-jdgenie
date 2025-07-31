@@ -14,6 +14,7 @@ llm:
     apikey: '<input llm key here>'
     interface_url: '/chat/completions'
     model: gpt-4.1
+    max_tokens: 16384
   settings: '{"claude-3-7-sonnet-v1": {
         "model": "claude-3-7-sonnet-v1",
         "max_tokens": 8192,

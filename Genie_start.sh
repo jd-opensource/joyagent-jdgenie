@@ -8,20 +8,9 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # 配置文件路径
-FIRST_RUN_FLAG=".first_run_completed"
 CONFIG_FILE="genie-backend/src/main/resources/application.yml"
 ENV_TEMPLATE="genie-tool/.env_template"
 ENV_FILE="genie-tool/.env"
-
-# 检查是否为首次运行
-is_first_run() {
-    [ ! -f "$FIRST_RUN_FLAG" ]
-}
-
-# 标记首次运行完成
-mark_first_run_completed() {
-    touch "$FIRST_RUN_FLAG"
-}
 
 # 检查配置是否完成
 check_config_completed() {
@@ -63,9 +52,9 @@ check_config_completed() {
     return 0
 }
 
-# 首次运行配置
-first_run_setup() {
-    echo -e "${BLUE}🚀 首次运行配置说明...${NC}"
+# 配置检查
+setup_config() {
+    echo -e "${BLUE}🚀 配置检查...${NC}"
     echo "=================================="
     
     # 如果.env文件不存在，自动复制模板
@@ -80,7 +69,7 @@ first_run_setup() {
         fi
     fi
     
-    echo -e "${YELLOW}📝 首次运行需要手动配置以下文件：${NC}"
+    echo -e "${YELLOW}📝 请确保以下文件已正确配置：${NC}"
     echo ""
     echo -e "${BLUE}1. 后端配置文件: ${GREEN}$CONFIG_FILE${NC}"
     echo -e "   需要配置LLM服务信息："
@@ -105,9 +94,9 @@ first_run_setup() {
     echo -e "${GREEN}✅ 配置文件检查通过，继续启动服务${NC}"
 }
 
-# 首次运行特殊处理
-first_run_special_setup() {
-    echo -e "${BLUE}🔧 首次运行特殊处理...${NC}"
+# 初始化设置
+init_setup() {
+    echo -e "${BLUE}🔧 初始化设置...${NC}"
     echo "=================================="
     
     # 1. 后端构建
@@ -155,10 +144,7 @@ first_run_special_setup() {
     fi
     cd ..
     
-    # 标记首次运行完成
-    mark_first_run_completed
-    
-    echo -e "${GREEN}✅ 首次运行特殊处理完成${NC}"
+    echo -e "${GREEN}✅ 初始化设置完成${NC}"
     echo "=================================="
 }
 
@@ -448,21 +434,9 @@ main() {
         exit 1
     fi
     
-    # 首次运行配置
-    if is_first_run; then
-        first_run_setup
-        first_run_special_setup
-    else
-        echo -e "${GREEN}✅ 检测到非首次运行，跳过配置步骤${NC}"
-        
-        # 检查配置是否完成
-        echo -e "${BLUE}🔍 检查配置文件...${NC}"
-        if ! check_config_completed; then
-            echo -e "${RED}❌ 配置文件检查失败，请完成配置后重新运行${NC}"
-            exit 1
-        fi
-        echo -e "${GREEN}✅ 配置文件检查通过${NC}"
-    fi
+    # 配置检查
+    setup_config
+    init_setup
     
     echo "=================================="
     echo -e "${BLUE}🚀 开始启动所有服务...${NC}"

@@ -32,7 +32,5 @@ declare global {
     type Merge<T1, T2> = Omit<T1, keyof T2> & T2;
   }
 
-  interface Window {
-    SERVICE_BASE_URL: string;
-  }
+  const SERVICE_BASE_URL: string;
 }

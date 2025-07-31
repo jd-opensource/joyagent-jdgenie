@@ -1,4 +1,5 @@
 # Agent开源git开源文档
+简体中文 | [English Version](README_EN.md)
 
 ## 业界首个开源高完成度轻量化通用多智能体产品(JoyAgent-JDGenie)
 **解决快速构建多智能体产品的最后一公里问题**
@@ -7,7 +8,7 @@
 
 当前相关开源agent主要是SDK或者框架，用户还需基于此做进一步的开发，无法直接做到开箱即用。我们开源的JoyAgent-JDGenie是端到端的多Agent产品，对于输入的query或者任务，可以直接回答或者解决。例如用户query"给我做一个最近美元和黄金的走势分析"，JoyAgent-Genie可以直接给出网页版或者PPT版的报告文档。
 
-JoyAgent-JDGenie是一个通用的多智能体框架，对于用户需要定制的一些新场景功能，只需将相关的子智能体或者工具挂载到JoyAgent-Genie即可。为了验证JoyAgent-JDGenie的通用性，在GAIA榜单准确率达到**75.15%**，已超越OWL（CAMEL）、Smolagent（Huggingface）、LRC-Huawei（Huawei）、xManus（OpenManus）、AutoAgent（香港大学）等行业知名产品。
+JoyAgent-JDGenie是一个通用的多智能体框架，对于用户需要定制的一些新场景功能，只需将相关的子智能体或者工具挂载到JoyAgent-Genie即可。为了验证JoyAgent-JDGenie的通用性，在GAIA榜单Validation集准确率**75.15%、**Test集**65.12%**，已超越OWL（CAMEL）、Smolagent（Huggingface）、LRC-Huawei（Huawei）、xManus（OpenManus）、AutoAgent（香港大学）等行业知名产品。
 
 此外，我们的开源多智能体产品JoyAgent-JDGenie相对比较轻量，不像阿里的SpringAI-Alibaba需要依赖阿里云百炼平台相关功能（基于百炼平台调用LLM），Coze依赖火山引擎平台。
 
@@ -165,13 +166,18 @@ JoyAgent-JDGenie是一个通用的多智能体框架，对于用户需要定制�
 
 ## 框架效果先进性
 
+### Test集效果 65.12%
+<img width="3524" height="1022" alt="test" src="https://github.com/user-attachments/assets/06c85286-e61f-4b5e-8335-413cd22ecbf4" />
+
+### Validation集效果 75.15%
+
 | Agent                     | Score      | Score_level1 | Score_level2 | Score_level3 | 机构         |
 |---------------------------|------------|--------------|--------------|--------------|------------|
 | Alita v2.1                | 0.8727     | 0.8868       | 0.8953       | 0.7692       | Princeton  |
 | Skywork                   | 0.8242     | 0.9245       | 0.8372       | 0.5769       | 天工         |
 | AWorld                    | 0.7758     | 0.8868       | 0.7791       | 0.5385       | Ant Group  |
 | Langfun                   | 0.7697     | 0.8679       | 0.7674       | 0.5769       | DeepMind   |
-| **JoyAgent-JDGenie(Our)** | **0.7515** | **0.8679**   | **0.7791**   | **0.4230**   | **Our**    |
+| **JoyAgent-JDGenie** | **0.7515** | **0.8679**   | **0.7791**   | **0.4230**   | **JD**    |
 | OWL                       | 0.6909     | 0.8491       | 0.6744       | 0.4231       | CAMEL      |
 | Smolagent                 | 0.5515     | 0.6792       | 0.5349       | 0.3462       | Huggingface |
 | AutoAgent                 | 0.5515     | 0.7170       | 0.5349       | 0.2692       | HKU        |
@@ -179,7 +185,8 @@ JoyAgent-JDGenie是一个通用的多智能体框架，对于用户需要定制�
 | LRC-Huawei                | 0.406      | 0.5283       | 0.4302       | 0.0769       | Huawei     |
 | xManus                    | 0.4061     | 0.8113       | 0.2791       | 0.0000       | OpenManus  |
 
-![比分](./docs/img/score.png)
+<img width="1073" height="411" alt="score" src="https://github.com/user-attachments/assets/9d997b68-565e-4228-8f5b-229158f33617" />
+
 ## 系统架构
 
 ![archi](./docs/img/archi.png)
@@ -217,22 +224,26 @@ JoyAgent-JDGenie是一个通用的多智能体框架，对于用户需要定制�
 
 ## 快速开始
 
-### 方式1: docker 一键启动服务（推荐）
+### 方式1: docker 一键启动服务
 
 ```
-git clone https://github.com/jd-opensource/joyagent-jdgenie.git
+1. git clone https://github.com/jd-opensource/joyagent-jdgenie.git
 
-cd genie-tool
+2. 手动更新 genie-backend/src/main/resources/application.yml中 base_url、apikey、model、max_tokens、model_name等配置
+使用DeepSeek时: 注意deepseek-chat 为max_tokens: 8192
 
-修改.env_template执行工具使用的配置
+手动更新 genie-tool/.env_template 中的 OPENAI_API_KEY、OPENAI_BASE_URL、DEFAULT_MODEL、SERPER_SEARCH_API_KEY
+使用DeepSeek时: 设置DEEPSEEK_API_KEY、DEEPSEEK_API_BASE，DEFAULT_MODEL 设置为 deepseek/deepseek-chat，所有 ${DEFAULT_MODEL} 也都改成deepseek/deepseek-chat
 
-回到根目录
-
+3. 编译dockerfile
 docker build -t genie:latest .
 
-# -e 设置对话模型服务地址、APIKEY
-docker run -d -p 3000:3000 -p 8080:8080 -p 1601:1601 -e OPENAI_BASE_URL="" -e OPENAI_API_KEY="" --name genie-app genie:latest
+4. 启动dockerfile
+docker run -d -p 3000:3000 -p 8080:8080 -p 1601:1601 --name genie-app genie:latest
+
+5. 浏览器输入 localhost:3000 访问genie
 ```
+如果部署遇到问题，可以参考视频:【5分钟使用deepseek启动开源智能体应用joyagent-genie-哔哩哔哩】 https://b23.tv/8VQDBOK
 
 ### 方式2: 手动初始化环境，启动服务
 
@@ -248,12 +259,14 @@ docker run -d -p 3000:3000 -p 8080:8080 -p 1601:1601 -e OPENAI_BASE_URL="" -e OP
 #### 方案1：手动step by step部署手册
 手动超详细攻略参考 [Step by Step](./Deploy.md)
 
-#### 方案2：手动一键启动部署
+#### 方案2：手动一键启动部署（推荐）
+
 直接通过shell启动所有服务
 ```
 sh check_dep_port.sh # 检查所有依赖和端口占用情况
 sh Genie_start.sh  # 直接启动，以后改动配置直接重启动脚本即可，control+c 一键kill所有服务
 ```
+部署时可以参考视频:【joyagent-jdgenie部署演示】 https://www.bilibili.com/video/BV1Py8Yz4ELK/?vd_source=a5601a346d433a490c55293e76180c9d
 
 ## 二次开发
 
@@ -262,6 +275,7 @@ sh Genie_start.sh  # 直接启动，以后改动配置直接重启动脚本即�
 #### 配置文件
 
 在 `genie-backend/src/main/resources/application.yml` 添加mcp_server服务，多个server逗号分隔
+在 `ui/.env` 中可以修改前端请求后端的路径
 
 ```yaml
 mcp_server_url: "http://ip1:port1/sse,http://ip2:port2/sse"
@@ -333,15 +347,20 @@ sh start_genie.sh
 ```
 
 
-## 贡献者
-贡献者：Liu Shangkun,Li Yang,Jia Shilin,Tian Shaohua,Wang zhen,Yao Ting,Wang Hongtao,Zhou xiaoqing,Liu min,Zhang Shuang,Liuwen,Yangdong,Xu Jialei,Zhou Meilei,Zhao Tingchong,Wu jiaxing, Wang Hanmin,Xu Shiyue,Liu Jiarun
+## 项目共建者
+贡献者：Liu Shangkun,Li Yang,Jia Shilin,Tian Shaohua,Wang Zhen,Yao Ting,Wang Hongtao,Zhou Xiaoqing,Liu min,Zhang Shuang,Liuwen,Yangdong,Xu Jialei,Zhou Meilei,Zhao Tingchong,Wu jiaxing, Wang Hanmin, Zhou Zhiyuan, Xu Shiyue,Liu Jiarun
 
 所属机构:京东CHO企业信息化团队（EI）
 
+## 贡献和合作
 
-## 引用和合作
+我们欢迎所有好想法和建议，如果您想成为项目的共建者，可随时向我们提Pull Request。无论是完善产品和框架、修复bug还是添加新特性，您的贡献都非常宝贵。
+在此之前需要您阅读并签署贡献者协议并发送到邮箱org.developer3@jd.com，请阅读 [贡献指南中文版](https://github.com/jd-opensource/joyagent-jdgenie/blob/main/contributor_ZH.pdf)，[贡献指南英文版](https://github.com/jd-opensource/joyagent-jdgenie/blob/main/contributor_EN.pdf)
 
-热忱欢迎开发者加入JoyAgent-JDGenie的建设！无论是完善产品和框架、修复 bug 还是添加新特性，您的贡献都非常宝贵。如需学术引用或联系，请使用以下 BibTeX：
+
+## 引用
+
+如需学术引用，请使用以下 BibTeX：
 ```bibtex
 @software{JoyAgent-JDGenie,
   author = {Agent Team at JDCHO},
@@ -364,6 +383,6 @@ sh start_genie.sh
 [![Star History Chart](https://api.star-history.com/svg?repos=jd-opensource/joyagent-jdgenie&type=Date&cache=false)](https://star-history.com/#jd-opensource/joyagent-jdgenie&Date)
 
 欢迎沟通和联系我们  
-![contact](./docs/img/ME1753153769883.png)
+![contact](./docs/img/wechat2.png)
 
 [//]: # (![contact]&#40;./docs/img/contact.jpg&#41;)

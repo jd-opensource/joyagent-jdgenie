@@ -7,10 +7,6 @@ import excleIcon from '@/assets/icon/excle.png';
 import pdfIcon from '@/assets/icon/pdf.png';
 import txtIcon from '@/assets/icon/txt.png';
 import htmlIcon  from '@/assets/icon/HTML.png';
-import mov1 from '@/assets/mov/mov1.mp4';
-import mov2 from '@/assets/mov/mov2.mp4';
-import mov3 from '@/assets/mov/mov3.mp4';
-import mov4 from '@/assets/mov/mov4.mp4';
 import demo1 from '@/assets/icon/demo1.png';
 import demo2 from '@/assets/icon/demo2.png';
 import demo3 from '@/assets/icon/demo3.png';
@@ -90,7 +86,7 @@ export const demoList = [
     title: 'Browser代码架构分析',
     description: '帮我分析github中开源的browser-use的代码，并进行分析',
     tag: '专业研究',
-    videoUrl: mov1,
+    videoUrl: 'https://private-user-images.githubusercontent.com/49786633/469170308-065b8d1a-92e4-470a-bbe3-426fafeca5c4.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTM2OTE1NDIsIm5iZiI6MTc1MzY5MTI0MiwicGF0aCI6Ii80OTc4NjYzMy80NjkxNzAzMDgtMDY1YjhkMWEtOTJlNC00NzBhLWJiZTMtNDI2ZmFmZWNhNWM0Lm1wND9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTA3MjglMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwNzI4VDA4MjcyMlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWNlOWNiZmZkMzdjNDUxODc4YjMyNDE1ZmU4ZjlmZjgwZjYxMzRlNWMwNmFlZjM1M2Q3ZDNlNDYzOTUzNmZlMTAmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.6OwtEGxcMnWlSCMgl0AaNy8NRl9lLuLx-nXrXdHLETg',
     url: '//storage.360buyimg.com/pubfree-bucket/ei-data-resource/89ab083/static/demoPage.html',
     image: demo1
   },
@@ -98,7 +94,7 @@ export const demoList = [
     title: '京东财报分析',
     description: '分析一下京东的最新财务报告，总结出核心数据以及公司发展情况',
     tag: '数据分析',
-    videoUrl: mov2,
+    videoUrl: 'https://private-user-images.githubusercontent.com/49786633/469171050-15dcf089-5659-489e-849d-39c651ca7e5a.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTM2OTE5ODgsIm5iZiI6MTc1MzY5MTY4OCwicGF0aCI6Ii80OTc4NjYzMy80NjkxNzEwNTAtMTVkY2YwODktNTY1OS00ODllLTg0OWQtMzljNjUxY2E3ZTVhLm1wND9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTA3MjglMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwNzI4VDA4MzQ0OFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTY0MDE1OWQ1NjNiNTcwZGY1ZTBhNzllNDhhMjM3M2E3YjQ3Mzc4ZjYwN2ExMWUxMTZjYzIwZWIzOGFhYjEzYjkmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.QqNCtSyGy20QbeNPPib6zVLpzPrcKmDMHJFphAwzx6E',
     url: '//storage.360buyimg.com/pubfree-bucket/ei-data-resource/89ab083/static/demoPage2.html',
     image: demo2
   },
@@ -106,7 +102,7 @@ export const demoList = [
     title: 'HR智能招聘产品竞品分析',
     description: '分析一下HR智能招聘领域的优秀产品，形成一个竞品对比报告',
     tag: '竞品调研',
-    videoUrl: mov3,
+    videoUrl: 'https://private-user-images.githubusercontent.com/49786633/469171112-cd99e2f8-9887-459f-ae51-00e7883fa050.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTM2OTE5ODgsIm5iZiI6MTc1MzY5MTY4OCwicGF0aCI6Ii80OTc4NjYzMy80NjkxNzExMTItY2Q5OWUyZjgtOTg4Ny00NTlmLWFlNTEtMDBlNzg4M2ZhMDUwLm1wND9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTA3MjglMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwNzI4VDA4MzQ0OFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTA2MDNiNDk5MThlZTRhMTY0YTM0YWQ1MGU2NDRlYzg1NWIxNDM4ZmYyMmE1MTY2YzgwZmUyOTI1MjY3NjFiNTQmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.-r9MhEJ9RgbYPi-cTCmG0wMxNmFC0rjXNMti4LRvspc',
     url: '//storage.360buyimg.com/pubfree-bucket/ei-data-resource/89ab083/static/demoPage3.html',
     image: demo3
   },
@@ -114,7 +110,7 @@ export const demoList = [
     title: '超市销售数据分析',
     description: '帮我分析一下国内销售数据',
     tag: '数据分析',
-    videoUrl: mov4,
+    videoUrl: 'https://private-user-images.githubusercontent.com/49786633/469171151-657bbe61-5516-4ab9-84c2-c6ca75cc4a6f.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTM2OTE5ODgsIm5iZiI6MTc1MzY5MTY4OCwicGF0aCI6Ii80OTc4NjYzMy80NjkxNzExNTEtNjU3YmJlNjEtNTUxNi00YWI5LTg0YzItYzZjYTc1Y2M0YTZmLm1wND9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTA3MjglMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwNzI4VDA4MzQ0OFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTJkMDNlNTkxNzFkNjFlYTI1MTAzNTIyZWM0YzA1MzE5MTY4NDYyYTg5MjUxZWY0Mjg0OWU1ODUxNGZkNTU3ZTEmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.BRatyWFZm91TAvRn1iss7DMPWLXIoRm9geqaN6af7cI',
     url: '//storage.360buyimg.com/pubfree-bucket/ei-data-resource/89ab083/static/demoPage4.html',
     image: demo4
   }

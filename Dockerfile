@@ -3,6 +3,7 @@ FROM docker.m.daocloud.io/library/node:20-alpine as frontend-builder
 WORKDIR /app
 RUN npm install -g pnpm
 COPY ui/package.json ui/pnpm-lock.yaml ./
+RUN npm config set registry https://registry.npmmirror.com
 RUN pnpm install
 COPY ui/ .
 RUN pnpm build
@@ -19,7 +20,16 @@ RUN ./build.sh
 # Python 环境准备阶段
 FROM docker.m.daocloud.io/library/python:3.11-slim as python-base
 WORKDIR /app
-RUN apt-get update && \
+
+RUN rm /etc/apt/sources.list.d/* && echo 'deb https://mirrors.aliyun.com/debian/ bookworm main contrib non-free non-free-firmware' \
+      > /etc/apt/sources.list && \
+    echo 'deb https://mirrors.aliyun.com/debian-security bookworm-security main contrib non-free non-free-firmware' \
+      >> /etc/apt/sources.list && \
+    echo 'deb https://mirrors.aliyun.com/debian/ bookworm-updates main contrib non-free non-free-firmware' \
+      >> /etc/apt/sources.list
+
+RUN apt-get clean && \
+    apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential \
     netcat-openbsd \
@@ -32,7 +42,14 @@ RUN pip install uv
 FROM docker.m.daocloud.io/library/python:3.11-slim
 
 # 安装系统依赖
-RUN apt-get update && \
+RUN rm /etc/apt/sources.list.d/* && echo 'deb https://mirrors.aliyun.com/debian/ bookworm main contrib non-free non-free-firmware' \
+      > /etc/apt/sources.list && \
+    echo 'deb https://mirrors.aliyun.com/debian-security bookworm-security main contrib non-free non-free-firmware' \
+      >> /etc/apt/sources.list && \
+    echo 'deb https://mirrors.aliyun.com/debian/ bookworm-updates main contrib non-free non-free-firmware' \
+      >> /etc/apt/sources.list
+RUN apt-get clean && \
+    apt-get update && \
     apt-get install -y --no-install-recommends \
     openjdk-17-jre-headless \
     netcat-openbsd \
@@ -52,7 +69,7 @@ COPY --from=frontend-builder /app/package.json /app/ui/package.json
 COPY --from=frontend-builder /app/node_modules /app/ui/node_modules
 
 # 复制后端构建产物
-COPY --from=backend-builder /app/target /app/backend/
+COPY --from=backend-builder /app/target /app/backend/target
 COPY genie-backend/start.sh /app/backend/
 RUN chmod +x /app/backend/start.sh
 
@@ -68,7 +85,7 @@ COPY genie-client/main.py genie-client/server.py genie-client/start.sh ./
 RUN chmod +x start.sh && \
     uv venv .venv && \
     . .venv/bin/activate && \
-    uv pip install -r pyproject.toml
+    export UV_DEFAULT_INDEX="https://pypi.tuna.tsinghua.edu.cn/simple" && uv sync
 
 # 复制 genie-tool
 WORKDIR /app/tool
@@ -80,7 +97,7 @@ COPY genie-tool/server.py genie-tool/start.sh genie-tool/.env_template ./
 RUN chmod +x start.sh && \
     uv venv .venv && \
     . .venv/bin/activate && \
-    uv pip install . && \
+    export UV_DEFAULT_INDEX="https://pypi.tuna.tsinghua.edu.cn/simple" && uv sync && \
     mkdir -p /data/genie-tool && \
     cp .env_template .env && \
     python -m genie_tool.db.db_engine

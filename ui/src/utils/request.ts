@@ -3,7 +3,7 @@ import { showMessage } from './utils';
 
 // 创建axios实例
 const request: AxiosInstance = axios.create({
-  baseURL: window.SERVICE_BASE_URL,
+  baseURL: SERVICE_BASE_URL,
   timeout: 10000,
   headers: {'Content-Type': 'application/json',},
 });

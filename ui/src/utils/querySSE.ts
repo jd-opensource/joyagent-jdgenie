@@ -1,6 +1,6 @@
 import { fetchEventSource, EventSourceMessage } from '@microsoft/fetch-event-source';
 
-const customHost = window.SERVICE_BASE_URL || 'http://127.0.0.1:8080';
+const customHost = SERVICE_BASE_URL || '';
 const DEFAULT_SSE_URL = `${customHost}/web/api/v1/gpt/queryAgentStreamIncr`;
 
 const SSE_HEADERS = {
