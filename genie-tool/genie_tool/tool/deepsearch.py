@@ -35,8 +35,9 @@ class DeepSearch:
         use_jina = "jina" in engines
         use_sogou = "sogou" in engines
         use_serp = "serp" in engines
+        use_metaso = "metaso" in engines
         self._search_single_query = partial(
-            MixSearch().search_and_dedup, use_bing=use_bing, use_jina=use_jina, use_sogou=use_sogou, use_serp=use_serp)
+            MixSearch().search_and_dedup, use_bing=use_bing, use_jina=use_jina, use_sogou=use_sogou, use_serp=use_serp, use_metaso=use_metaso)
         self.searched_queries = []
         self.current_docs = []
 

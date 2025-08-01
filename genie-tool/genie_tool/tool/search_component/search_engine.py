@@ -217,6 +217,45 @@ class SerperSearch(JinaSearch):
                     ) for item in result.get("organic", [])
                 ]
 
+class MetasoSearch(JinaSearch):
+
+    def __init__(self):
+        super().__init__()
+        self._engine = "metaso"
+        self._url = os.getenv("METASO_SEARCH_URL")
+        self._api_key = os.getenv("METASO_SEARCH_API_KEY")
+        self.headers["Accept"] = "application/json"
+        self.set_auth()
+    
+    def set_auth(self):
+        self.headers["Authorization"] = f"Bearer {self._api_key}"
+
+    def construct_body(self, query: str, request_id: str = None):
+        return {
+            "q": query,
+            "scope":"webpage",
+            "includeSummary":"false",    # 通过网页的摘要信息进行召回增强
+            "size":self._count,
+            "includeRawContent":"false", # 抓取所有来源网页原文, 额外消耗，非必要不开启
+            "conciseSnippet":"false"     # 返回精简的原文匹配信息
+        }
+    
+    async def search(self, query: str, request_id: str = None, *args, **kwargs) -> List[Doc]:
+        body = self.construct_body(query, request_id)
+        async with aiohttp.ClientSession() as session:
+            async with session.post(self._url, json=body, headers=self.headers, timeout=self._timeout) as response:
+                result = json.loads(await response.text())
+                return [
+                    Doc(
+                        doc_type="web_page",
+                        content=item.get("snippet", ""),
+                        title=item.get("title", ""),
+                        link=item.get("link", ""),
+                        data={"search_engine": self._engine},
+                    ) for item in result.get("webpages", [])
+                ]
+
+
 
 class MixSearch(BingSearch):
 
@@ -227,12 +266,13 @@ class MixSearch(BingSearch):
         self._jina_engine = JinaSearch()
         self._sogou_engine = SogouSearch()
         self._serp_engine = SerperSearch()
+        self._metaso_engine = MetasoSearch()
 
     async def search(
             self, query: str, request_id: str = None,
             use_bing: bool = True, use_jina: bool = True, use_sogou: bool = True,
-            use_serp: bool = True, *args, **kwargs) -> List[Doc]:
-        assert use_bing or use_jina or use_sogou or use_serp
+            use_serp: bool = True, use_metaso: bool = True, *args, **kwargs) -> List[Doc]:
+        assert use_bing or use_jina or use_sogou or use_serp or use_metaso
         engines = []
         if use_bing:
             engines.append(self._bing_engine)
@@ -242,6 +282,8 @@ class MixSearch(BingSearch):
             engines.append(self._sogou_engine)
         if use_serp:
             engines.append(self._serp_engine)
+        if use_metaso:
+            engines.append(self._metaso_engine)
         async with asyncio.TaskGroup() as tg:
             tasks = [tg.create_task(engine.search_and_dedup(query=query, request_id=request_id)) for engine in engines]
         results = [task.result() for task in tasks]
