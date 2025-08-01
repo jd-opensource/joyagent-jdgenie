@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -97,7 +96,7 @@ public class GenieConfig {
     private Map<String, Object> planToolParams = new HashMap<>();
     @Value("${autobots.autoagent.tool.plan_tool.params:{}}")
     public void setPlanToolParams(String jsonStr) {
-        this.planToolParams = JSON.parseObject(jsonStr, Map.class);
+        this.planToolParams = JSON.parseObject(jsonStr);
     }
 
     /**
@@ -106,7 +105,7 @@ public class GenieConfig {
     private Map<String, Object> codeAgentPamras = new HashMap<>();
     @Value("${autobots.autoagent.tool.code_agent.params:{}}")
     public void setCodeAgentPamras(String jsonStr) {
-        this.codeAgentPamras = JSON.parseObject(jsonStr, Map.class);
+        this.codeAgentPamras = JSON.parseObject(jsonStr);
     }
 
     /**
@@ -115,7 +114,7 @@ public class GenieConfig {
     private Map<String, Object> reportToolPamras = new HashMap<>();
     @Value("${autobots.autoagent.tool.report_tool.params:{}}")
     public void setHtmlToolPamras(String jsonStr) {
-        this.reportToolPamras = JSON.parseObject(jsonStr, Map.class);
+        this.reportToolPamras = JSON.parseObject(jsonStr);
     }
 
     /**
@@ -124,7 +123,7 @@ public class GenieConfig {
     private Map<String, Object> fileToolPamras = new HashMap<>();
     @Value("${autobots.autoagent.tool.file_tool.params:{}}")
     public void setFileoolPamras(String jsonStr) {
-        this.fileToolPamras = JSON.parseObject(jsonStr, Map.class);
+        this.fileToolPamras = JSON.parseObject(jsonStr);
     }
 
     /**
@@ -133,7 +132,7 @@ public class GenieConfig {
     private Map<String, Object> deepSearchToolPamras = new HashMap<>();
     @Value("${autobots.autoagent.tool.deep_search.params:{}}")
     public void setDeepSearchToolPamras(String jsonStr) {
-        this.deepSearchToolPamras = JSON.parseObject(jsonStr, Map.class);
+        this.deepSearchToolPamras = JSON.parseObject(jsonStr);
     }
 
     @Value("${autobots.autoagent.tool.file_tool.truncate_len:5000}")
