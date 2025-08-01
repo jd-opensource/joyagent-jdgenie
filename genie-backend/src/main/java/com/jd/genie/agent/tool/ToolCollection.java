@@ -5,6 +5,8 @@ import com.jd.genie.agent.agent.AgentContext;
 import com.jd.genie.agent.dto.tool.McpToolInfo;
 import com.jd.genie.agent.tool.mcp.McpTool;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -14,7 +16,8 @@ import java.util.Map;
 /**
  * 工具集合类 - 管理可用的工具
  */
-@Data
+@Getter
+@Setter
 @Slf4j
 public class ToolCollection {
     private Map<String, BaseTool> toolMap;
