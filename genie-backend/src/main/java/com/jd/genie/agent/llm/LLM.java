@@ -700,28 +700,31 @@ public class LLM {
                                             // tool call
                                             if (Objects.nonNull(choice.delta.tool_calls)) {
                                                 List<OpenAIToolCall> openAIToolCalls = choice.delta.tool_calls;
+                                                // 使用循环索引作为工具的Key 未来看看是否需要更改工具缓存的Key
+                                                int curIndex = 0;
                                                 // log.info("{} recv tool call data: {}", context.getRequestId(), openAIToolCalls);
                                                 for (OpenAIToolCall toolCall : openAIToolCalls) {
-                                                    OpenAIToolCall currentToolCall = openToolCallsMap.get(toolCall.index);
+                                                    OpenAIToolCall currentToolCall = openToolCallsMap.get(curIndex);
                                                     if (Objects.isNull(currentToolCall)) {
                                                         currentToolCall = new OpenAIToolCall();
                                                     }
                                                     // [{"index":0,"id":"call_j74R8JMFWTC4rW5wHJ0TtmNU","type":"function","function":{"name":"planning","arguments":""}}]
-                                                    if (Objects.nonNull(toolCall.id)) {
+                                                    if (StringUtil.isNotEmpty(toolCall.id)) {
                                                         currentToolCall.id = toolCall.id;
                                                     }
-                                                    if (Objects.nonNull(toolCall.type)) {
+                                                    if (StringUtil.isNotEmpty(toolCall.type)) {
                                                         currentToolCall.type = toolCall.type;
                                                     }
                                                     if (Objects.nonNull(toolCall.function)) {
-                                                        if (Objects.nonNull(toolCall.function.name)) {
+                                                        if (StringUtil.isNotEmpty(toolCall.function.name)) {
                                                             currentToolCall.function = toolCall.function;
                                                         }
-                                                        if (Objects.nonNull(toolCall.function.arguments)) {
+                                                        if (StringUtil.isNotEmpty(toolCall.function.arguments)) {
                                                             currentToolCall.function.arguments += toolCall.function.arguments;
                                                         }
                                                     }
-                                                    openToolCallsMap.put(toolCall.index, currentToolCall);
+                                                    openToolCallsMap.put(curIndex, currentToolCall);
+                                                    curIndex++;
                                                 }
                                             }
                                         }
