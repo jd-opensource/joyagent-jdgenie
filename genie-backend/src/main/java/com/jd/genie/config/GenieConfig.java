@@ -103,37 +103,37 @@ public class GenieConfig {
     /**
      * codeAgent 配置
      */
-    private Map<String, Object> codeAgentPamras = new HashMap<>();
+    private Map<String, Object> codeAgentParams = new HashMap<>();
     @Value("${autobots.autoagent.tool.code_agent.params:{}}")
-    public void setCodeAgentPamras(String jsonStr) {
-        this.codeAgentPamras = JSON.parseObject(jsonStr, Map.class);
+    public void setCodeAgentParams(String jsonStr) {
+        this.codeAgentParams = JSON.parseObject(jsonStr, Map.class);
     }
 
     /**
      * reportTool 配置
      */
-    private Map<String, Object> reportToolPamras = new HashMap<>();
+    private Map<String, Object> reportToolParams = new HashMap<>();
     @Value("${autobots.autoagent.tool.report_tool.params:{}}")
-    public void setHtmlToolPamras(String jsonStr) {
-        this.reportToolPamras = JSON.parseObject(jsonStr, Map.class);
+    public void setHtmlToolParams(String jsonStr) {
+        this.reportToolParams = JSON.parseObject(jsonStr, Map.class);
     }
 
     /**
      * fileTool 配置
      */
-    private Map<String, Object> fileToolPamras = new HashMap<>();
+    private Map<String, Object> fileToolParams = new HashMap<>();
     @Value("${autobots.autoagent.tool.file_tool.params:{}}")
-    public void setFileoolPamras(String jsonStr) {
-        this.fileToolPamras = JSON.parseObject(jsonStr, Map.class);
+    public void setFileoolParams(String jsonStr) {
+        this.fileToolParams = JSON.parseObject(jsonStr, Map.class);
     }
 
     /**
      * DeepSearchTool 配置
      */
-    private Map<String, Object> deepSearchToolPamras = new HashMap<>();
+    private Map<String, Object> deepSearchToolParams = new HashMap<>();
     @Value("${autobots.autoagent.tool.deep_search.params:{}}")
-    public void setDeepSearchToolPamras(String jsonStr) {
-        this.deepSearchToolPamras = JSON.parseObject(jsonStr, Map.class);
+    public void setDeepSearchToolParams(String jsonStr) {
+        this.deepSearchToolParams = JSON.parseObject(jsonStr, Map.class);
     }
 
     @Value("${autobots.autoagent.tool.file_tool.truncate_len:5000}")

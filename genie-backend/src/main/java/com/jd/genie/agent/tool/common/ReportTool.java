@@ -45,8 +45,8 @@ public class ReportTool implements BaseTool {
     public Map<String, Object> toParams() {
 
         GenieConfig genieConfig = SpringContextHolder.getApplicationContext().getBean(GenieConfig.class);
-        if (!genieConfig.getReportToolPamras().isEmpty()) {
-            return genieConfig.getReportToolPamras();
+        if (!genieConfig.getReportToolParams().isEmpty()) {
+            return genieConfig.getReportToolParams();
         }
 
         Map<String, Object> taskParam = new HashMap<>();
