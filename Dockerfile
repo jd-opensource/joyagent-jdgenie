@@ -2,7 +2,7 @@
 FROM docker.m.daocloud.io/library/node:20-alpine as frontend-builder
 WORKDIR /app
 RUN npm install -g pnpm
-COPY ui/package.json ui/pnpm-lock.yaml ./
+COPY ui/package.json ./
 RUN npm config set registry https://registry.npmmirror.com
 RUN pnpm install
 COPY ui/ .
