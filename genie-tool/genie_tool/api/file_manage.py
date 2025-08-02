@@ -77,7 +77,15 @@ async def download_file(file_id: str, file_name: str):
     file_info = await FileInfoOp.get_by_file_id(file_id=file_id)
     if not file_info or not os.path.exists(file_info.file_path):
         return Response(content="File not found", status_code=404)
-    return FileResponse(file_info.file_path, filename=os.path.basename(file_name))
+    encoded_file_name = quote(file_name)
+    headers = {
+        "Content-Disposition": f"attachment; filename=\"{encoded_file_name}\"; filename*=UTF-8''{encoded_file_name}",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    }
+
+    return FileResponse(file_info.file_path, filename=os.path.basename(file_name),headers=headers)
 
 
 @router.get("/preview/{file_id}/{file_name}")
@@ -92,6 +100,7 @@ async def preview_file(file_id: str, file_name: str):
     if file_name.endswith(".md"):
         content_type = "text/markdown"
     else:
+
         content_type, _ = mimetypes.guess_type(file_name)
     if not content_type:
         content_type = "application/octet-stream"

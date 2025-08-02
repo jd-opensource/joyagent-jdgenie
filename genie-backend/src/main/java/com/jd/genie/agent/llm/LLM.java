@@ -663,8 +663,9 @@ public class LLM {
                                 new InputStreamReader(responseBody.byteStream())
                         );
                         while ((line = reader.readLine()) != null) {
-                            if (line.startsWith("data: ")) {
-                                String data = line.substring(6);
+                            if (line.startsWith("data:")) {
+                                //这里返回的数据格式是 data:{}中间没有空格
+                                String data = line.substring(5);
                                 if (data.equals("[DONE]")) {
                                     break;
                                 }
