@@ -19,7 +19,7 @@ if command -v java &> /dev/null; then
     JAVA_VERSION=$(java -version 2>&1 | head -n 1 | cut -d'"' -f2)
     JAVA_MAJOR=$(echo $JAVA_VERSION | cut -d'.' -f1)
     
-    if [[ "$JAVA_VERSION" == *"1."* ]]; then
+    if [[ "$JAVA_VERSION" == "1."* ]]; then
         JAVA_MAJOR=$(echo $JAVA_VERSION | cut -d'.' -f2)
     fi
     
