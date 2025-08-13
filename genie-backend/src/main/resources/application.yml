@@ -12,7 +12,7 @@ llm:
   default:
     base_url: '<input llm server here>'
     apikey: '<input llm key here>'
-    interface_url: '/chat/completions'
+    interface_url: '/v1/chat/completions'
     model: gpt-4.1
     max_tokens: 16384
   settings: '{"claude-3-7-sonnet-v1": {
