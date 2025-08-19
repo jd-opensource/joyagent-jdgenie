@@ -191,7 +191,7 @@ JoyAgent-JDGenie是一个通用的多智能体框架，对于用户需要定制�
 
 ![archi](./docs/img/archi.png)
 
-本开源项目基于JoyAgent-JDGenie产品开源了整体的产品界面、智能体的多种核心模式（react模式、plan and executor模式等）、多个子智能体（report agent、search agent等）以及多整体间交互协议。
+本开源项目基于JoyAgent-JDGenie产品开源了整体的产品界面、智能体的多种核心模式（react模式、plan and executor模式等）、多个子智能体（report agent、search agent等）以及多智能体间交互协议。
 
 ### 主要特点和优势
 
