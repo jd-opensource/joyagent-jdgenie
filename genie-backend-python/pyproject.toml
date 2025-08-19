@@ -1,0 +1,86 @@
+[project]
+name = "genie-backend-python"
+version = "0.0.1"
+description = "Genie AI Agent backend service - Python implementation"
+authors = [
+    {name = "Genie Team", email = "team@genie.ai"}
+]
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+
+dependencies = [
+    "fastapi>=0.104.1",
+    "uvicorn[standard]>=0.24.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "httpx>=0.25.2",
+    "aiofiles>=23.2.1",
+    "python-multipart>=0.0.6",
+    "pyyaml>=6.0.1",
+    "python-json-logger>=2.0.7",
+    "tenacity>=8.2.3",
+    "asyncio-mqtt>=0.16.1",
+    "websockets>=12.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.3",
+    "pytest-asyncio>=0.21.1",
+    "pytest-cov>=4.1.0",
+    "black>=23.11.0",
+    "isort>=5.12.0",
+    "mypy>=1.7.1",
+    "flake8>=6.1.0"
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src/main/python"]
+
+[tool.setuptools.package-dir]
+"" = "src/main/python"
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q --cov=src"
+testpaths = [
+    "src/test/python",
+]
+python_files = [
+    "test_*.py",
+    "*_test.py",
+]

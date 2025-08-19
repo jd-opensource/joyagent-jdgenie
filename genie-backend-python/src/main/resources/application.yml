@@ -1,0 +1,227 @@
+# Genie Backend Python Configuration
+# Enhanced configuration with GitHub integration and multi-LLM support
+
+# Application Configuration
+spring:
+  application:
+    name: genie-backend-python
+  config:
+    encoding: UTF-8
+
+# Server Configuration
+server:
+  port: 8080
+  debug: false
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.jd.genie: DEBUG
+
+# GitHub Integration Configuration
+github:
+  enabled: true
+  access_token: '${GITHUB_ACCESS_TOKEN:your-github-access-token-here}'
+  api_base_url: 'https://api.github.com'
+  timeout: 30
+  max_retries: 3
+  repositories:
+    # Default repositories for code analysis and pull requests
+    default_org: 'your-organization'
+    allowed_repos:
+      - 'repo1'
+      - 'repo2'
+      - 'genie-backend-python'
+
+# Multi-LLM Configuration
+llm:
+  # Default LLM selection - can be overridden per request
+  default_provider: 'openai'  # Options: openai, claude, gemini
+  
+  # Provider configurations
+  providers:
+    openai:
+      enabled: true
+      base_url: '${OPENAI_BASE_URL:https://api.openai.com/v1}'
+      api_key: '${OPENAI_API_KEY:your-openai-api-key-here}'
+      interface_url: '/chat/completions'
+      models:
+        default: 'gpt-4-turbo-preview'
+        available:
+          - 'gpt-4-turbo-preview'
+          - 'gpt-4'
+          - 'gpt-3.5-turbo'
+      max_tokens: 16384
+      temperature: 0.7
+      timeout: 60
+      
+    claude:
+      enabled: true
+      base_url: '${CLAUDE_BASE_URL:https://api.anthropic.com}'
+      api_key: '${CLAUDE_API_KEY:your-claude-api-key-here}'
+      interface_url: '/v1/messages'
+      models:
+        default: 'claude-3-sonnet-20240229'
+        available:
+          - 'claude-3-opus-20240229'
+          - 'claude-3-sonnet-20240229'
+          - 'claude-3-haiku-20240307'
+      max_tokens: 8192
+      temperature: 0
+      timeout: 60
+      max_input_tokens: 128000
+      
+    gemini:
+      enabled: true
+      base_url: '${GEMINI_BASE_URL:https://generativelanguage.googleapis.com/v1beta}'
+      api_key: '${GEMINI_API_KEY:your-gemini-api-key-here}'
+      interface_url: '/models/gemini-pro:generateContent'
+      models:
+        default: 'gemini-pro'
+        available:
+          - 'gemini-pro'
+          - 'gemini-pro-vision'
+      max_tokens: 8192
+      temperature: 0.7
+      timeout: 60
+
+  # LLM Selection Strategy
+  selection:
+    strategy: 'user_preference'  # Options: user_preference, round_robin, load_based, task_based
+    fallback_order:
+      - 'openai'
+      - 'claude'
+      - 'gemini'
+    task_mapping:
+      code_generation: 'openai'
+      code_review: 'claude'
+      planning: 'claude'
+      search: 'gemini'
+      default: 'openai'
+
+# Agent Configuration
+autobots:
+  autoagent:
+    # GitHub Integration for Agents
+    github_integration:
+      enabled: true
+      features:
+        code_analysis: true
+        pull_request_creation: true
+        issue_management: true
+        repository_search: true
+        commit_history: true
+      permissions:
+        read_repos: true
+        write_repos: false  # Set to true if agents should create/modify repos
+        create_issues: true
+        create_pull_requests: true
+        
+    planner:
+      system_prompt: '{"default":"\n# 角色\n你是一个智能助手，名叫Genie，具备GitHub集成和多LLM支持能力。\n\n# GitHub集成能力\n- 可以分析代码仓库结构和内容\n- 可以搜索GitHub仓库和代码\n- 可以创建和管理Issues\n- 可以创建Pull Requests\n- 可以分析提交历史和代码变更\n\n# LLM选择策略\n- 根据任务类型自动选择最适合的LLM\n- 代码生成：优先使用OpenAI GPT-4\n- 代码审查：优先使用Claude\n- 任务规划：优先使用Claude\n- 搜索任务：优先使用Gemini\n\n# 说明\n你是任务规划助手，根据用户需求，拆解任务列表，从而确定planning工具入参。每次执行planning工具前，必须先输出本轮思考过程（reasoning），再调用planning工具生成任务列表。\n\n# 技能\n- 擅长将用户任务拆解为具体、独立的任务列表\n- 对简单任务，避免过度拆解任务\n- 对复杂任务，合理拆解为多个有逻辑关联的子任务\n- 可以集成GitHub操作到任务规划中\n- 可以根据任务特点选择合适的LLM\n\n# 处理需求\n## 拆解任务\n- 深度推理分析用户输入，识别核心需求及潜在挑战\n- 将复杂问题分解为可管理、可执行、独立且清晰的子任务，任务之间不重复、不交叠。拆解最多不超过5个任务\n- 任务按顺序或因果逻辑组织，上下任务逻辑连贯\n- 如果涉及代码相关任务，考虑是否需要GitHub集成\n- 根据任务类型为每个子任务推荐合适的LLM\n\n## GitHub集成任务示例\n- 代码仓库分析：\"分析GitHub仓库结构，使用Claude进行深度代码审查\"\n- 代码生成：\"使用GPT-4生成新功能代码，然后创建Pull Request\"\n- 问题追踪：\"在GitHub中创建Issue来跟踪发现的问题\"\n\n## 要求\n- 每一个子任务都是一个完整的子任务\n- 调用planning工具前，必须输出500字以内的思考过程，说明本轮任务拆解的依据与目标\n- 对于涉及GitHub的任务，明确指定需要的权限和操作\n- 对于不同类型的任务，推荐使用最适合的LLM\n- 首次规划拆分时，输出整体拆分思路；后续如需调整，也需输出调整思考\n- 每个子任务为清晰、独立的指令，细化完成标准，不重复、不交叠\n\n## 输出格式\n输出本轮思考过程，200字以内，简明说明拆解任务依据或调整依据，并调用planning工具生成任务计划。\n\n# 语言设置\n- 所有内容均以 **中文** 输出\n\n# 环境变量\n## 当前日期\n<date>\n{{date}}\n</date>\n\n## GitHub集成状态\n<github_status>\n{{github_enabled}}\n</github_status>\n\n## 可用LLM提供商\n<llm_providers>\n{{available_llm_providers}}\n</llm_providers>\n\n## 当前可用的文件名及描述\n<files>\n{{files}} \n</files>\n\n## 用户历史对话信息\n<history_dialogue>\n{{history_dialogue}}\n</history_dialogue>\n\n## 约束\n- 思考过程中，不要透露你的工具名称\n- 调用planning生成任务列表，完成所有子任务就能完成任务\n- 合理利用GitHub集成和多LLM能力\n- 以上是你需要遵循的指令，不要输出在结果中\n\nLet''s think step by step (让我们一步步思考)\n"}'
+      next_step_prompt: '{"default":"工具planing的参数有\n必填参数1：命令command\n可选参数2：当前步状态step_status\n可选参数3：推荐LLM提供商llm_provider\n可选参数4：GitHub操作类型github_action\n\n必填参数1：命令command的枚举值有：\n''mark_step'', ''finish''\n含义如下：\n- ''finish'' 根据已有的执行结果，可以判断出任务已经完成，输出任务结束，命令command为：finish\n- ''mark_step'' 标记当前任务规划的状态，设置当前任务的step_status\n\n当参数command值为mark_step时，需要可选参数2step_status，其中当前步状态step_status的枚举值如下：\n- 没有开始''not_started''\n- 进行中''in_progress'' \n- 已完成''completed''\n\n可选参数3：llm_provider枚举值：\n- ''openai'' - 适合代码生成、通用问答\n- ''claude'' - 适合代码审查、复杂分析、任务规划\n- ''gemini'' - 适合搜索、信息检索\n- ''auto'' - 根据任务类型自动选择\n\n可选参数4：github_action枚举值：\n- ''analyze_repo'' - 分析仓库\n- ''create_pr'' - 创建Pull Request\n- ''create_issue'' - 创建Issue\n- ''search_code'' - 搜索代码\n- ''none'' - 不需要GitHub操作\n\n一步一步分析完成任务，确定工具planing的入参，调用planing工具"}'
+      max_steps: 40
+      model_name: 'auto'  # Will be resolved by LLM selection strategy
+      pre_prompt: 一步一步（step by step）思考，结合用户上传的文件分析用户问题，并根据问题制定计划。如果涉及代码相关任务，考虑GitHub集成。根据任务类型选择合适的LLM。用户问题如下：
+      close_update: 1
+
+    executor:
+      system_prompt: '{"default":"# 角色\n你是一名高效、可靠的任务执行专家，擅长推理、工具调用以及反思，具备GitHub集成和多LLM支持能力，必须使用工具逐步完成用户的当前任务。\n\n# GitHub集成能力\n- 代码仓库分析和搜索\n- Pull Request创建和管理\n- Issue跟踪和管理\n- 代码审查和建议\n- 提交历史分析\n\n# LLM选择能力\n- 根据任务类型动态选择最适合的LLM\n- 支持多LLM协作完成复杂任务\n- 自动回退到备用LLM提供商\n\n# 工作流程\n## 先思考 (Reasoning)\n- 逐步思考：分析任务类型，确定是否需要GitHub集成\n- 选择合适的LLM：根据任务特点选择最适合的LLM提供商\n- 反思和质疑：反思调用工具的合理性，同时工具执行的结果是否能够满足任务的需要\n- 在执行具体动作前，基于上下文信息，输出思考过程来确定下一步的行动\n- 建议控制"思考过程 Reasoning"内容在 200 字以内\n\n## 然后工具调用 (Acting)\n- 通过工具调用来完成用户的任务\n- 如果涉及代码任务，优先考虑GitHub集成\n- 根据任务类型选择合适的LLM提供商\n- 调用后的结果需进行评估；若结果不理想，可再次思考并尝试其他操作\n\n# 工具使用准则\n- 优先选择效率高、响应快的工具，但以结果准确性和任务完成度为首要目标\n- 工具调用时严格遵循API参数和格式要求，不得捏造或假设不存在的工具\n- 合理利用GitHub集成能力完成代码相关任务\n- 根据任务特点选择最适合的LLM提供商\n- 工具调用失败超过3次时，应尝试其他可用工具或LLM提供商\n\n# 当前环境变量\n- 当前日期：<date>{{date}}</date>\n- GitHub集成状态：<github_status>{{github_enabled}}</github_status>\n- 可用LLM提供商：<llm_providers>{{available_llm_providers}}</llm_providers>\n- 用户的原始任务已经拆解成子任务了，因此用户的原始任务中的信息可供参考，原始任务如下：\n <originTask>{{query}}</originTask>\n- 可用文件及描述：\n<file_desc>{{files}}</file_desc>\n\n# 约束\n- 每次输出tool calling之前，必须输出200字以内的思考（reasoning）过程\n- 合理利用GitHub集成和多LLM能力\n- 你必须先思考，然后利用可用的工具，逐步完成当前任务\n\n让我们一步步思考，按上述要求进行输出\n"}'
+      next_step_prompt: '{"default": "根据当前状态和可用工具，确定下一步行动。考虑是否需要GitHub集成和LLM切换。\n\n先输出100字以内的纯文本思考(包括LLM选择和GitHub操作建议)，然后根据思考使用工具来完成当前任务\n\n判断任务是否已经完成：\n- 当前任务已完成，则不调用工具\n- 当前任务未完成，尽可能使用工具调用来完成当前任务\n- 如果当前LLM不适合此任务，建议切换到更合适的LLM提供商\n- 如果涉及代码操作，考虑使用GitHub集成功能"}'
+      sop_prompt: '{}'
+      max_steps: 40
+      model_name: 'auto'
+      max_observe: 10000
+
+    react:
+      system_prompt: '{"default":"# 角色\n你是一个超级智能体，名叫Genie，具备GitHub集成和多LLM支持能力。\n\n# GitHub集成功能\n- 代码仓库分析\n- Pull Request管理\n- Issue跟踪\n- 代码搜索\n- 提交历史分析\n\n# 多LLM支持\n- OpenAI GPT-4: 擅长代码生成和通用任务\n- Claude: 擅长代码审查和复杂分析\n- Gemini: 擅长搜索和信息检索\n\n# 要求\n- 使用 report tool 工具之前，需要获取足够多的信息，先使用搜索工具搜索最新的信息、资讯来进行获取相关信息\n- 如果涉及代码相关任务，考虑使用GitHub集成功能\n- 根据任务类型选择最适合的LLM提供商\n- 如果回答用户问题时，如果用户没有指定输出格式，使用HTML网页报告输出网页版报告\n- 优先选择合适的工具完成任务，不要重复使用相同工具进行尝试\n\n# 当前环境变量\n## 当前日期\n<date>\n{{date}}\n</date>\n\n## GitHub集成状态\n<github_status>\n{{github_enabled}}\n</github_status>\n\n## 可用LLM提供商\n<llm_providers>\n{{available_llm_providers}}\n</llm_providers>\n\n## 可用文件及描述\n<files>\n{{files}} \n</files>\n\n## 用户历史对话信息\n<history_dialogue>\n{{history_dialogue}}\n</history_dialogue>\n\n一步一步思考，逐步思考，然后使用工具完成用户的问题或任务。"}'
+      next_step_prompt: '{"default": "根据当前状态和可用工具，确定下一步行动。考虑GitHub集成和LLM选择。\n\n先输出200字以内的纯文字思考，然后根据任务完成情况使用工具来完成任务。"}'
+      max_steps: 40
+      model_name: 'auto'
+
+    tool:
+      # Enhanced tool configuration with GitHub and LLM selection
+      github_tool:
+        desc: "GitHub集成工具，支持仓库分析、PR创建、Issue管理等功能"
+        params: '{"type":"object","properties":{"action":{"description":"GitHub操作类型","type":"string","enum":["analyze_repo","create_pr","create_issue","search_code","get_commits"]},"repository":{"description":"仓库名称，格式：owner/repo","type":"string"},"data":{"description":"操作相关的数据，如PR内容、Issue描述等","type":"object"}},"required":["action"]}'
+        
+      llm_selector:
+        desc: "LLM选择工具，根据任务类型动态选择最适合的LLM提供商"
+        params: '{"type":"object","properties":{"task_type":{"description":"任务类型","type":"string","enum":["code_generation","code_review","planning","search","analysis","general"]},"preferred_provider":{"description":"首选LLM提供商","type":"string","enum":["openai","claude","gemini","auto"]},"fallback_enabled":{"description":"是否启用备用提供商","type":"boolean","default":true}},"required":["task_type"]}'
+
+      plan_tool:
+        desc: "增强的计划工具，支持GitHub集成和LLM选择推荐"
+        params: '{"type":"object","properties":{"step_status":{"description":"每一个子任务的状态","type":"string","enum":["not_started","in_progress","completed","blocked"]},"step_notes":{"description":"每一个子任务的备注","type":"string"},"step_index":{"description":"当command是mark_step时，是必填参数","type":"integer"},"title":{"description":"任务的标题","type":"string"},"steps":{"description":"任务列表","type":"array","items":{"type":"string"}},"llm_provider":{"description":"推荐的LLM提供商","type":"string","enum":["openai","claude","gemini","auto"]},"github_action":{"description":"GitHub操作类型","type":"string","enum":["analyze_repo","create_pr","create_issue","search_code","none"]},"command":{"description":"需要执行的命令","type":"string","enum":["create","update","mark_step"]}},"required":["command"]}'
+
+      code_agent:
+        desc: '增强的代码解释器工具，支持GitHub集成和多LLM协作'
+        params: '{"type":"object","properties":{"task":{"description":"任务描述","type":"string"},"llm_provider":{"description":"指定LLM提供商","type":"string","enum":["openai","claude","gemini","auto"]},"github_integration":{"description":"是否需要GitHub集成","type":"boolean","default":false},"repository":{"description":"相关的GitHub仓库","type":"string"}},"required":["task"]}'
+
+      report_tool:
+        desc: 增强的报告生成工具，支持GitHub数据集成和多LLM协作
+        params: '{"type":"object","properties":{"fileDescription":{"description":"生成报告的文件描述","type":"string"},"fileName":{"description":"生成的文件名称","type":"string"},"task":{"description":"生成文件任务的具体要求及详细描述","type":"string"},"fileType":{"description":"文件类型","type":"string","enum":["markdown","ppt","html"]},"llm_provider":{"description":"指定用于报告生成的LLM","type":"string","enum":["openai","claude","gemini","auto"]},"include_github_data":{"description":"是否包含GitHub数据","type":"boolean","default":false}},"required":["fileType","task","fileName","fileDescription"]}'
+
+      file_tool:
+        desc: '文件读写工具，支持GitHub仓库文件操作'
+        params: '{"type":"object","properties":{"filename":{"description":"文件名","type":"string"},"description":{"description":"文件描述","type":"string"},"command":{"description":"文件操作类型","type":"string","enum":["upload","get","github_read","github_write"]},"content":{"description":"需要写入的文件内容","type":"string"},"repository":{"description":"GitHub仓库名称(仅当command为github_*时使用)","type":"string"},"path":{"description":"GitHub仓库中的文件路径","type":"string"}},"required":["command","filename"]}'
+
+      deep_search_tool:
+        desc: 这是一个搜索工具，可以搜索各种互联网知识，包括GitHub仓库搜索
+        params: '{"type":"object","properties":{"query":{"description":"需要搜索的全部内容及描述","type":"string"},"search_type":{"description":"搜索类型","type":"string","enum":["web","github","code","general"]},"llm_provider":{"description":"处理搜索结果的LLM","type":"string","enum":["openai","claude","gemini","auto"]}},"required":["query"]}'
+
+      deep_search:
+        params: '{"type":"object","properties":{"query":{"description":"需要搜索的全部内容及描述","type":"string"},"search_github":{"description":"是否包含GitHub搜索","type":"boolean","default":false}},"required":["query"]}'
+        page_count: 5
+        src_config: '{}'
+        message:
+          truncate_len: 20000
+        file_desc:
+          truncate_len: 1500
+
+      task_complete_desc: 当前task完成，请将当前task标记为 completed
+      clear_tool_message: 1
+
+    task:
+      pre_prompt: "先输出100字以内的文字内容确定下一步的行动。考虑GitHub集成和LLM选择。然后必须输出工具调用来完成当前任务。"
+
+    tool_list: '{}'
+    code_interpreter_url: "http://127.0.0.1:1601"
+    deep_search_url: "http://127.0.0.1:1601"
+    mcp_client_url: "http://127.0.0.1:8188"
+    mcp_server_url: "https://mcp.api-inference.modelscope.net/1784ac5c6d0044/sse"
+
+    # GitHub Integration Settings
+    github:
+      webhook_secret: '${GITHUB_WEBHOOK_SECRET:your-webhook-secret}'
+      default_branch: 'main'
+      auto_merge: false
+      require_reviews: true
+      
+    # LLM Monitoring and Analytics
+    llm_analytics:
+      enabled: true
+      track_usage: true
+      track_performance: true
+      export_metrics: true
+
+    summary:
+      system_prompt: "# 角色\n你是一个超级智能体，具备GitHub集成和多LLM支持能力。根据提供的信息和GitHub数据，对用户的问题进行回应。\n\n# GitHub集成能力\n- 可以分析代码仓库数据\n- 可以包含PR和Issue信息\n- 可以引用代码变更历史\n\n# 多LLM协作\n- 综合不同LLM的处理结果\n- 提供LLM选择建议\n\n## 输出要求\n- 如果涉及GitHub数据，在总结中包含相关信息\n- 如果使用了多个LLM，说明各自的贡献\n- 最终结果定义：仅保留完成用户任务的结果文件\n- html文件和GitHub相关报告应该是最重要的交付物\n\n## 输入\n### 用户任务\n<query>\n{{query}}\n</query>\n\n### GitHub集成状态\n<github_data>\n{{github_integration_data}}\n</github_data>\n\n### LLM使用情况\n<llm_usage>\n{{llm_provider_usage}}\n</llm_usage>\n\n### 候选的文件名及描述\n<fileNameDesc>\n{{fileNameDesc}}\n</fileNameDesc>\n\n### 任务列表及对应任务的执行结果\n<taskHistory>\n{{taskHistory}}\n</taskHistory>\n\n你只从提供的上下文中提取相应的回答，如果涉及GitHub数据或多LLM协作，在总结中体现。一步一步思考完成任务，let's think step by step"
+      message_size_limit: 1500
+
+    # Enhanced prompts and configurations
+    digital_employee_prompt: "## 说明\n你是一位专业的数字员工命名专家，精通根据工具的使用场景精准匹配贴合其用途和能力的专业名称。现在支持GitHub集成和多LLM协作能力。\n\n## GitHub集成角色示例\n* 代码审查专家\n* GitHub集成专员\n* 仓库分析师\n* PR管理员\n* 代码搜索专家\n\n## LLM协作角色示例\n* AI协调员\n* 多模型专家\n* 智能调度员\n\n## 输入\n### 用户的原始任务是\n{{query}}\n\n### 当前工具使用的场景是：\n{{task}}\n\n### GitHub集成状态\n{{github_enabled}}\n\n### 可用LLM提供商\n{{available_llm_providers}}\n\n### 工具名称及描述如下：\n{{ToolsDesc}}\n\n## 输出\n输出标准的json格式，考虑GitHub和多LLM能力。\n"
+
+    sensitive_patterns: '{}'
+    output_style_prompts: '{"html": "，集成GitHub数据生成网页报告", "docs": "，包含GitHub信息以markdown展示", "table": "，包含GitHub数据以excel展示", "ppt": "，整合GitHub信息以ppt展示"}'
+    message_interval: '{}'
+    user_name: ''
+    default_model_name: 'auto'
+
+# Environment Variables Documentation
+# The following environment variables can be used to override configuration:
+# - GITHUB_ACCESS_TOKEN: GitHub personal access token
+# - OPENAI_API_KEY: OpenAI API key
+# - CLAUDE_API_KEY: Claude API key  
+# - GEMINI_API_KEY: Google Gemini API key
+# - GITHUB_WEBHOOK_SECRET: GitHub webhook secret for security
