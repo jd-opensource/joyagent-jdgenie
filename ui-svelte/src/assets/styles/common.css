@@ -1,0 +1,4 @@
+.no-border-textarea:focus{
+  border: none;
+  box-shadow: none;
+}

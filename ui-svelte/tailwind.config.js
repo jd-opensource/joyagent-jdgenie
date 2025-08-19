@@ -1,0 +1,68 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./src/**/*.{html,js,svelte,ts}'],
+  important: true,
+  theme: {
+    extend: {
+      colors: {
+        primary: '#4040FFB2',
+      },
+      spacing: {
+        '1': '1px',
+        '2': '2px',
+        '4': '4px',
+        '6': '6px',
+        '8': '8px',
+        '10': '10px',
+        '12': '12px',
+        '14': '14px',
+        '16': '16px',
+        '20': '20px',
+        '24': '24px',
+        '28': '28px',
+        '32': '32px',
+        '36': '36px',
+        '40': '40px',
+        '48': '48px',
+        '56': '56px',
+        '64': '64px',
+        '72': '72px',
+        '80': '80px',
+        '96': '96px',
+        '100': '100px',
+        '120': '120px',
+        '140': '140px',
+        '160': '160px',
+        '180': '180px',
+        '200': '200px',
+        '240': '240px',
+        '280': '280px',
+        '320': '320px',
+        '360': '360px',
+        '400': '400px',
+        '480': '480px',
+        '560': '560px',
+        '640': '640px',
+        '720': '720px',
+        '800': '800px',
+        '960': '960px',
+      },
+      animation: {
+        'dot-pulse': 'dot-pulse 1.5s infinite ease-in-out',
+      },
+      keyframes: {
+        'dot-pulse': {
+          '0%, 100%': {
+            transform: 'scale(1)',
+            backgroundColor: '#acbdff',
+          },
+          '50%': {
+            transform: 'scale(1.5)',
+            backgroundColor: '#4040ff',
+          },
+        },
+      },
+    },
+  },
+  plugins: [],
+};

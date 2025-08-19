@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    @apply m-0 p-0 h-full;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply m-0 font-bold;
+  }
+
+  a {
+    @apply text-blue-500 no-underline hover:text-blue-700;
+  }
+
+  ul,
+  ol {
+    @apply list-none m-0 p-0;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .delay-0ms {
+    animation-delay: 0s !important;
+  }
+
+  .delay-400ms {
+    animation-delay: 0.4s !important;
+  }
+
+  .delay-800ms {
+    animation-delay: 0.8s !important;
+  }
+}
+
+#app {
+  height: 100%;
+}
