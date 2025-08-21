@@ -82,7 +82,7 @@ JoyAgent-JDGenie是一个通用的多智能体框架，对于用户需要定制�
 <tr>
 <td>Coze</td>
 <td>部分</td>
-<td>否，只开源部分Nieo SDK（SDK）</td>
+<td>否，开源了Eino框架（SDK），以及Coze和Coze loop </td>
 <td>是（火山引擎平台）</td>
 </tr>
 <tr>
