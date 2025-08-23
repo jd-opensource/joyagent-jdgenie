@@ -62,11 +62,13 @@ class DeepSearch:
         """深度搜索回复（流式）"""
 
         current_loop = 1
+        current_search = ""
         # 执行深度搜索循环
         while current_loop <= max_loop:
             logger.info(f"{request_id} 第 {current_loop} 轮深度搜索...")
             # 查询分解
-            sub_queries = await query_decompose(query=query)
+            current_search =  "\n".join(self.searched_queries) if self.searched_queries else "" 
+            sub_queries = await query_decompose(query=query, retrieval_str=current_search)
 
             yield json.dumps({
                 "requestId": request_id,
