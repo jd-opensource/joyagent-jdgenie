@@ -12,23 +12,43 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse, PlainTextResponse
 from fastapi.requests import Request
 
-from ..agent.agent.agent_context import AgentContext
-from ..agent.enums.agent_type import AgentType
-from ..agent.printer.printer import Printer
-from ..agent.printer.sse_printer import SSEPrinter
-from ..agent.tool.tool_collection import ToolCollection
-from ..agent.tool.common.file_tool import FileTool
-from ..agent.tool.common.code_interpreter_tool import CodeInterpreterTool
-from ..agent.tool.common.report_tool import ReportTool
-from ..agent.tool.common.deep_search_tool import DeepSearchTool
-from ..agent.tool.mcp.mcp_tool import McpTool
-from ..agent.util.date_util import DateUtil
-from ..config.genie_config import GenieConfig
-from ..model.req.agent_request import AgentRequest
-from ..model.req.gpt_query_req import GptQueryReq
-from ..service.agent_handler_service import AgentHandlerService
-from ..service.i_gpt_process_service import IGptProcessService
-from ..service.impl.agent_handler_factory import AgentHandlerFactory
+try:
+    from ..agent.agent.agent_context import AgentContext
+    from ..agent.enums.agent_type import AgentType
+    from ..agent.printer.printer import Printer
+    from ..agent.printer.sse_printer import SSEPrinter
+    from ..agent.tool.tool_collection import ToolCollection
+    from ..agent.tool.common.file_tool import FileTool
+    from ..agent.tool.common.code_interpreter_tool import CodeInterpreterTool
+    from ..agent.tool.common.report_tool import ReportTool
+    from ..agent.tool.common.deep_search_tool import DeepSearchTool
+    from ..agent.tool.mcp.mcp_tool import McpTool
+    from ..agent.util.date_util import DateUtil
+    from ..config.genie_config import GenieConfig
+    from ..model.req.agent_request import AgentRequest
+    from ..model.req.gpt_query_req import GptQueryReq
+    from ..service.agent_handler_service import AgentHandlerService
+    from ..service.i_gpt_process_service import IGptProcessService
+    from ..service.impl.agent_handler_factory import AgentHandlerFactory
+except ImportError:
+    # Fallback to absolute imports if relative imports fail
+    from com.jd.genie.agent.agent.agent_context import AgentContext
+    from com.jd.genie.agent.enums.agent_type import AgentType
+    from com.jd.genie.agent.printer.printer import Printer
+    from com.jd.genie.agent.printer.sse_printer import SSEPrinter
+    from com.jd.genie.agent.tool.tool_collection import ToolCollection
+    from com.jd.genie.agent.tool.common.file_tool import FileTool
+    from com.jd.genie.agent.tool.common.code_interpreter_tool import CodeInterpreterTool
+    from com.jd.genie.agent.tool.common.report_tool import ReportTool
+    from com.jd.genie.agent.tool.common.deep_search_tool import DeepSearchTool
+    from com.jd.genie.agent.tool.mcp.mcp_tool import McpTool
+    from com.jd.genie.agent.util.date_util import DateUtil
+    from com.jd.genie.config.genie_config import GenieConfig
+    from com.jd.genie.model.req.agent_request import AgentRequest
+    from com.jd.genie.model.req.gpt_query_req import GptQueryReq
+    from com.jd.genie.service.agent_handler_service import AgentHandlerService
+    from com.jd.genie.service.i_gpt_process_service import IGptProcessService
+    from com.jd.genie.service.impl.agent_handler_factory import AgentHandlerFactory
 
 logger = logging.getLogger(__name__)
 
@@ -105,7 +125,7 @@ class GenieController:
             
         return query
     
-    def build_tool_collection(
+    async def build_tool_collection(
         self, 
         agent_context: AgentContext, 
         request: AgentRequest
@@ -193,90 +213,90 @@ class GenieController:
 
 
 # Dependency injection functions
-def get_genie_config() -> GenieConfig:
+def get_app_state(request: Request):
+    """Get app state from request."""
+    return request.app.state
+
+
+def get_genie_config(request: Request) -> GenieConfig:
     """Get Genie configuration dependency."""
-    return GenieConfig.from_env()
+    return request.app.state.config
 
 
-def get_agent_handler_factory(
-    genie_config: GenieConfig = Depends(get_genie_config)
-) -> AgentHandlerFactory:
+def get_agent_handler_factory(request: Request) -> AgentHandlerFactory:
     """Get agent handler factory dependency."""
-    # This would be properly injected in a real DI container
-    handlers: List[AgentHandlerService] = []  # TODO: Inject actual handlers
-    return AgentHandlerFactory(handlers)
+    return request.app.state.agent_handler_factory
 
 
-def get_gpt_process_service(
-    genie_config: GenieConfig = Depends(get_genie_config)
-) -> IGptProcessService:
+def get_gpt_process_service(request: Request) -> IGptProcessService:
     """Get GPT process service dependency."""
-    # This would be properly injected in a real DI container
-    pass  # TODO: Return actual service implementation
+    return request.app.state.gpt_process_service
 
 
-def get_genie_controller(
-    genie_config: GenieConfig = Depends(get_genie_config),
-    agent_handler_factory: AgentHandlerFactory = Depends(get_agent_handler_factory),
-    gpt_process_service: IGptProcessService = Depends(get_gpt_process_service)
-) -> GenieController:
+def get_genie_controller(request: Request) -> GenieController:
     """Get Genie controller dependency."""
-    return GenieController(genie_config, agent_handler_factory, gpt_process_service)
+    app_state = request.app.state
+    return GenieController(
+        app_state.config,
+        app_state.agent_handler_factory,
+        app_state.gpt_process_service
+    )
 
 
 @router.post("/AutoAgent")
 async def auto_agent(
-    request: AgentRequest,
-    controller: GenieController = Depends(get_genie_controller)
+    agent_request: AgentRequest,
+    request: Request
 ) -> StreamingResponse:
     """
     Execute agent scheduling.
     
     Args:
-        request: Agent request
-        controller: Genie controller instance
+        agent_request: Agent request
+        request: FastAPI request for dependency injection
         
     Returns:
         SSE streaming response
     """
-    logger.info(f"{request.request_id} auto agent request: {json.dumps(request.__dict__)}")
+    controller = get_genie_controller(request)
+    logger.info(f"{agent_request.request_id} auto agent request: {json.dumps(agent_request.dict())}")
     
     async def generate():
         try:
             # Create SSE printer
-            printer = SSEPrinter(request, request.agent_type)
+            printer = SSEPrinter(agent_request, agent_request.agent_type)
             
             # Build agent context
             agent_context = AgentContext(
-                request_id=request.request_id,
-                session_id=request.request_id,
+                request_id=agent_request.request_id,
+                session_id=agent_request.request_id,
                 printer=printer,
-                query=controller.handle_output_style(request),
+                query=controller.handle_output_style(agent_request),
                 task="",
                 date_info=DateUtil.current_date_info(),
                 product_files=[],
                 task_product_files=[],
-                sop_prompt=request.sop_prompt,
-                base_prompt=request.base_prompt,
-                agent_type=request.agent_type,
-                is_stream=request.is_stream if request.is_stream is not None else False
+                sop_prompt=agent_request.sop_prompt,
+                base_prompt=agent_request.base_prompt,
+                agent_type=agent_request.agent_type,
+                is_stream=agent_request.is_stream if agent_request.is_stream is not None else False
             )
             
             # Build tool collection
-            agent_context.tool_collection = controller.build_tool_collection(agent_context, request)
+            agent_context.tool_collection = await controller.build_tool_collection(agent_context, agent_request)
             
             # Get appropriate handler
-            handler = controller.agent_handler_factory.get_handler(agent_context, request)
+            handler = controller.agent_handler_factory.get_handler(agent_context, agent_request)
             
             if handler:
                 # Execute processing logic
-                await handler.handle(agent_context, request)
+                await handler.handle(agent_context, agent_request)
             else:
-                logger.error(f"{request.request_id} No suitable handler found")
+                logger.error(f"{agent_request.request_id} No suitable handler found")
                 yield "data: {'error': 'No suitable handler found'}\n\n"
                 
         except Exception as e:
-            logger.error(f"{request.request_id} auto agent error", exc_info=e)
+            logger.error(f"{agent_request.request_id} auto agent error", exc_info=e)
             yield f"data: {{'error': '{str(e)}'}}\n\n"
     
     return StreamingResponse(
@@ -303,16 +323,17 @@ async def health() -> PlainTextResponse:
 @router.post("/web/api/v1/gpt/queryAgentStreamIncr")
 async def query_agent_stream_incr(
     params: GptQueryReq,
-    controller: GenieController = Depends(get_genie_controller)
+    request: Request
 ) -> StreamingResponse:
     """
     Handle Agent streaming incremental query requests, return SSE event stream.
     
     Args:
         params: Query request parameters containing GPT query information
-        controller: Genie controller instance
+        request: FastAPI request for dependency injection
         
     Returns:
         SSE event stream for streaming incremental response results
     """
+    controller = get_genie_controller(request)
     return await controller.gpt_process_service.query_multi_agent_incr_stream(params)

@@ -5,7 +5,7 @@ File utility functions.
 import logging
 from typing import List, Optional
 
-from ...dto.file import File
+from ..dto.file import File
 
 logger = logging.getLogger(__name__)
 

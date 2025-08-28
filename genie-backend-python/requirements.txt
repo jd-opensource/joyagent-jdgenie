@@ -1,2 +1,28 @@
-pydantic>=2.0.0
-typing-extensions>=4.0.0
+# Core dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Async and SSE support
+aiohttp==3.9.1
+sse-starlette==1.8.2
+httpx==0.25.2
+
+# Configuration
+pyyaml==6.0.1
+python-dotenv==1.0.0
+
+# JSON and data handling
+orjson==3.9.10
+
+# Logging
+loguru==0.7.2
+
+# Testing (optional)
+pytest==7.4.3
+pytest-asyncio==0.21.1
+
+# Type checking (optional)
+mypy==1.7.1
+types-pyyaml==6.0.12.12
