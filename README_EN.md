@@ -4,6 +4,7 @@
 **Address the last-mile challenge in rapidly developing multi-agent products.**
 
 ## Introduction
+The code wiki (https://deepwiki.com/jd-opensource/joyagent-jdgenie)
 Most existing open-source agent projects are primarily SDKs or frameworks, requiring users to perform additional development and lacking true out-of-the-box usability. In contrast, our open-source JoyAgent-JDGenie is an end-to-end multi-agent product that can directly answer or resolve user queries or tasks. For example, when a user submits a query like“Provide an analysis of recent trends between the US dollar and gold,”JoyAgent-JDGenie can instantly generate a report in web or PPT format.
 
 - **Generality and Customization**
