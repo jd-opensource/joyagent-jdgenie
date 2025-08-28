@@ -1,0 +1,145 @@
+version: '3.8'
+
+services:
+  # Frontend UI service (Svelte version)
+  ui-svelte:
+    build:
+      context: .
+      dockerfile: Dockerfile.python-services
+      target: ui-svelte
+    image: genie-ui-svelte:latest
+    container_name: genie-ui-svelte
+    ports:
+      - "3000:5173"  # Vite default port
+    environment:
+      - NODE_ENV=production
+      - PUBLIC_API_URL=http://genie-backend-python:8080
+    volumes:
+      - ./ui-svelte:/app
+    working_dir: /app
+    command: sh -c "npm install && npm run build && npm run preview -- --host 0.0.0.0 --port 5173"
+    networks:
+      - genie-network-python
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Python Backend service
+  genie-backend-python:
+    build:
+      context: .
+      dockerfile: Dockerfile.python-backend
+    image: genie-backend-python:latest
+    container_name: genie-backend-python
+    ports:
+      - "8080:8080"
+    environment:
+      # Server configuration
+      - SERVER_PORT=8080
+      - DEBUG_MODE=false
+      
+      # LLM Configuration
+      - LLM_DEFAULT_BASE_URL=${LLM_DEFAULT_BASE_URL:-http://your-llm-server}
+      - LLM_DEFAULT_APIKEY=${LLM_DEFAULT_APIKEY:-your-api-key}
+      - LLM_DEFAULT_MODEL=${LLM_DEFAULT_MODEL:-gpt-4.1}
+      
+      # Service URLs
+      - AUTOBOTS_CODE_INTERPRETER_URL=http://genie-tool:1601
+      - AUTOBOTS_DEEP_SEARCH_URL=http://genie-tool:1601
+      - AUTOBOTS_MCP_CLIENT_URL=http://genie-client:8188
+      - AUTOBOTS_MCP_SERVER_URL=${MCP_SERVER_URL:-https://mcp.api-inference.modelscope.net/1784ac5c6d0044/sse}
+      
+      # Python specific
+      - PYTHONUNBUFFERED=1
+      - PYTHONPATH=/app/src/main/python
+    volumes:
+      - ./genie-backend-python:/app
+      - ./genie-backend-python/src/main/resources/application.yml:/app/src/main/resources/application.yml:ro
+      - genie-python-logs:/app/logs
+    working_dir: /app
+    command: sh -c "pip install -r requirements.txt && python genie_application.py"
+    networks:
+      - genie-network-python
+    depends_on:
+      - genie-tool
+      - genie-client
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/web/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Python Tool service
+  genie-tool:
+    build:
+      context: .
+      dockerfile: Dockerfile.python-services
+      target: genie-tool
+    image: genie-tool:latest
+    container_name: genie-tool-python
+    ports:
+      - "1601:1601"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL}
+      - OPENAI_API_BASE=${OPENAI_BASE_URL}
+      - DB_PATH=/data/genie-tool/genie_tool.db
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./genie-tool:/app
+      - genie-tool-data-python:/data/genie-tool
+    working_dir: /app
+    command: sh -c ". .venv/bin/activate && python -m genie_tool.db.db_engine && python server.py"
+    networks:
+      - genie-network-python
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:1601/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Python Client (MCP) service
+  genie-client:
+    build:
+      context: .
+      dockerfile: Dockerfile.python-services
+      target: genie-client
+    image: genie-client:latest
+    container_name: genie-client-python
+    ports:
+      - "8188:8188"
+    environment:
+      - MCP_SERVER_URL=${MCP_SERVER_URL:-https://mcp.api-inference.modelscope.net}
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./genie-client:/app
+    working_dir: /app
+    command: sh -c ". .venv/bin/activate && python server.py"
+    networks:
+      - genie-network-python
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8188/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  genie-network-python:
+    driver: bridge
+    name: genie-network-python
+
+volumes:
+  genie-python-logs:
+    name: genie-python-logs
+  genie-tool-data-python:
+    name: genie-tool-data-python

@@ -1,0 +1,75 @@
+# Multi-stage Dockerfile for Python services
+
+# Base Python image
+FROM python:3.11-slim as python-base
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install --no-cache-dir uv
+
+# Genie Tool stage
+FROM python-base as genie-tool
+WORKDIR /app
+
+# Copy and install dependencies
+COPY genie-tool/pyproject.toml genie-tool/uv.lock ./
+RUN uv venv .venv && \
+    . .venv/bin/activate && \
+    uv sync
+
+# Copy application code
+COPY genie-tool/ .
+
+# Create data directory
+RUN mkdir -p /data/genie-tool
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PATH="/app/.venv/bin:$PATH"
+
+EXPOSE 1601
+
+# Genie Client stage
+FROM python-base as genie-client
+WORKDIR /app
+
+# Copy and install dependencies
+COPY genie-client/pyproject.toml genie-client/uv.lock ./
+RUN uv venv .venv && \
+    . .venv/bin/activate && \
+    uv sync
+
+# Copy application code
+COPY genie-client/ .
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PATH="/app/.venv/bin:$PATH"
+
+EXPOSE 8188
+
+# UI Svelte stage
+FROM node:20-alpine as ui-svelte
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy package files
+COPY ui-svelte/package*.json ./
+
+# Install dependencies
+RUN npm config set registry https://registry.npmmirror.com && \
+    pnpm install
+
+# Copy application code
+COPY ui-svelte/ .
+
+# Build the application
+RUN pnpm build
+
+EXPOSE 5173
+
+# Default command for preview
+CMD ["pnpm", "preview", "--host", "0.0.0.0", "--port", "5173"]

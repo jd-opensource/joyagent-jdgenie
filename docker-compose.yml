@@ -1,0 +1,130 @@
+version: '3.8'
+
+services:
+  # Frontend UI service
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: frontend-builder
+    image: genie-ui:latest
+    container_name: genie-ui
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./ui:/app
+    working_dir: /app
+    command: sh -c "npm config set registry https://registry.npmmirror.com && pnpm install && pnpm preview --host 0.0.0.0 --port 3000"
+    networks:
+      - genie-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Java Backend service
+  genie-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: backend-builder
+    image: genie-backend-java:latest
+    container_name: genie-backend-java
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SERVER_PORT=8080
+      - LLM_DEFAULT_BASE_URL=${LLM_DEFAULT_BASE_URL:-http://your-llm-server}
+      - LLM_DEFAULT_APIKEY=${LLM_DEFAULT_APIKEY:-your-api-key}
+      - AUTOBOTS_CODE_INTERPRETER_URL=http://genie-tool:1601
+      - AUTOBOTS_DEEP_SEARCH_URL=http://genie-tool:1601
+      - AUTOBOTS_MCP_CLIENT_URL=http://genie-client:8188
+    volumes:
+      - ./genie-backend/src/main/resources/application.yml:/app/config/application.yml:ro
+      - ./genie-backend/target:/app/target
+      - genie-logs:/app/logs
+    working_dir: /app
+    command: sh -c "cd /app && java -jar target/genie-backend-0.0.1-SNAPSHOT.jar --spring.config.location=/app/config/application.yml"
+    networks:
+      - genie-network
+    depends_on:
+      - genie-tool
+      - genie-client
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/web/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Python Tool service
+  genie-tool:
+    build:
+      context: .
+      dockerfile: Dockerfile.python-services
+      target: genie-tool
+    image: genie-tool:latest
+    container_name: genie-tool
+    ports:
+      - "1601:1601"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL}
+      - OPENAI_API_BASE=${OPENAI_BASE_URL}
+      - DB_PATH=/data/genie-tool/genie_tool.db
+    volumes:
+      - ./genie-tool:/app
+      - genie-tool-data:/data/genie-tool
+    working_dir: /app
+    command: sh -c ". .venv/bin/activate && python -m genie_tool.db.db_engine && python server.py"
+    networks:
+      - genie-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:1601/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Python Client (MCP) service
+  genie-client:
+    build:
+      context: .
+      dockerfile: Dockerfile.python-services
+      target: genie-client
+    image: genie-client:latest
+    container_name: genie-client
+    ports:
+      - "8188:8188"
+    environment:
+      - MCP_SERVER_URL=${MCP_SERVER_URL:-https://mcp.api-inference.modelscope.net}
+    volumes:
+      - ./genie-client:/app
+    working_dir: /app
+    command: sh -c ". .venv/bin/activate && python server.py"
+    networks:
+      - genie-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8188/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  genie-network:
+    driver: bridge
+    name: genie-network
+
+volumes:
+  genie-logs:
+    name: genie-logs
+  genie-tool-data:
+    name: genie-tool-data

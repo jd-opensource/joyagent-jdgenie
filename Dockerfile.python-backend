@@ -1,0 +1,37 @@
+# Dockerfile for Python backend (genie-backend-python)
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first for better caching
+COPY genie-backend-python/requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the entire Python backend code
+COPY genie-backend-python/ .
+
+# Set Python path
+ENV PYTHONPATH=/app/src/main/python:$PYTHONPATH
+ENV PYTHONUNBUFFERED=1
+
+# Create necessary directories
+RUN mkdir -p /app/logs /app/data
+
+# Expose port
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8080/web/health || exit 1
+
+# Run the application
+CMD ["python", "genie_application.py"]
