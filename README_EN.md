@@ -357,9 +357,9 @@ sh start_genie.sh
 
 
 ## Contributors
-Core Team: Liu Shangkun,Li Yang,Jia Shilin,Tian Shaohua,Wang Zhen,Yao Ting,Wang Hongtao,Zhou Xiaoqing,Liu min,Zhang Shuang,Liuwen,Yangdong,Xu Jialei,Zhou Meilei,Zhao Tingchong,Wu jiaxing, Wang Hanmin,Xu Shiyue,Liu Jiarun
+Core Team: Liu Shangkun,Li Yang,Jia Shilin,Tian Shaohua,Wang Zhen,Yao Ting,Wang Hongtao,Zhou Xiaoqing,Liu min,Zhang Shuang,Liuwen,Yangdong,Xu Jialei,Zhou Meilei,Zhao Tingchong,Wu jiaxing, Wang Hanmin, Zhou Zhiyuan, Xu Shiyue,Liu Jiarun, Hou Kang, Jing Lingtuan, Guo Hongliang, Liu Yanchen, Chen Kun, Pan Zheyi, Duan Zhewen, Tu Shengkun, Zhang Haidong, Wang Heng, Zhang Junbo
 
-Core Team: JD.com CHO Enterprise Informatization Team (EI)
+Core Team: JD.com CHO Enterprise Informatization Team (EI), JDT, JDL
 
 ## Contribution & Collaboration
 We welcome all great ideas and suggestions. If you wish to become a project co-builder, you may submit Pull Requests at any time. Whether it's improving products/frameworks, fixing bugs, or adding new features - all contributions are highly valued.
