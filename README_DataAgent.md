@@ -39,8 +39,9 @@
 
 ## 效果先进性：Birdsql榜单
 
-### Test集效果 75.35%, Dev集效果73.66%
-![archi](./docs/img/birdsql.png)
+### Test集效果 75.74%, Dev集效果74.25%
+<img width="600" height="573" alt="截屏2025-09-22 18 29 08" src="https://github.com/user-attachments/assets/e7355b3e-b922-4d48-877b-2a9060ab61b1" />
+
 
 ## 系统架构
 
