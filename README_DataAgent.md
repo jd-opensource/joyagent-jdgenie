@@ -2,7 +2,7 @@
 
 ## 简介
 当前Data Agent相关竞品，有些不支持数据治理、有些不支持诊断分析、有些不开源。因此，我们从端到端开箱即用的角度，我们开源了JoyDataAgent其包含了数据治理DGP协议&工具、智能问数、诊断分析和工作建议。特别对于诊断分析和工作建议，这类问题往往没有固定答案也无法通过例行报告自动呈现，正需要JoyDataAgent提供的“新角度”与aha moment来激发思考。
-对于JoyDataAgent是一个通用的智能问数的框架和产品，对于用户的场景，只需将表按照DGP协议进行治理后，即可直接进行问数和诊断分析。为了验证JoyDataAgent的通用性，在Birdsql公开榜单test集准确率75.35%排名第7（共84支提交队伍），目前得分领先于字节跳动DataAgent、IBM等竞争对手。
+对于JoyDataAgent是一个通用的智能问数的框架和产品，对于用户的场景，只需将表按照DGP协议进行治理后，即可直接进行问数和诊断分析。为了验证JoyDataAgent的通用性，在Birdsql公开榜单test集准确率75.74%排名第7（共84支提交队伍），目前得分领先于字节跳动DataAgent、IBM等竞争对手。
 ### 竞品功能分析
 ![archi](./docs/img/dataagent_compare.png)
 
