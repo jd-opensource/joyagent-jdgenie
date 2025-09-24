@@ -10,7 +10,8 @@
 
 [**<font color=red>JoyDataAgent：首个开源的包含数据治理DGP协议、智能问数和智能诊断分析的智能体</font>**](README_DataAgent.md)
 （注意使用data_agent分支）
-![archi](./docs/img/dataagent.png)
+<img width="1200" height="675" alt="image" src="https://github.com/user-attachments/assets/3a449185-4863-4171-8dda-72cb70b2fa91" />
+
 **多模态RAG：敬请期待**
 ## 简介
 
