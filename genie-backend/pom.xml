@@ -125,7 +125,6 @@
             <groupId>com.clickhouse</groupId>
             <artifactId>clickhouse-jdbc</artifactId>
             <version>0.5.0</version>
-            <!--<classifier>http</classifier>-->
         </dependency>
         <!-- Recommended to communicate with ClickHouse server over http -->
         <dependency>
