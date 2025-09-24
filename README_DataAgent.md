@@ -44,8 +44,8 @@
 
 
 ## 系统架构
+<img width="1200" height="675" alt="image" src="https://github.com/user-attachments/assets/0e7317fd-aa56-4f3e-9518-163484e1ca95" />
 
-![archi](./docs/img/dataagent.png)
 
 本开源项目基于JoyAgent-JDGenie产品开源了整体的产品界面、智能体的多种核心模式（react模式、plan and executor模式等）、
 多个子智能体（report agent、search agent等）以及多智能体间交互协议。同时在此基础上进一步开源了数据分析智能体，主要包括数据治理DGP协议&工具、智能问数、诊断分析和工作建议。
