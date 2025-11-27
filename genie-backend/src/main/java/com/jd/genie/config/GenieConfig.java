@@ -85,6 +85,12 @@ public class GenieConfig {
     @Value("${autobots.autoagent.tool.report_tool.desc:}")
     private String reportToolDesc;
 
+    @Value("${autobots.autoagent.tool.knowledge_tool.desc:}")
+    private String knowledgeToolDesc;
+
+    @Value("${autobots.autoagent.tool.multimodalagent_tool.desc:}")
+    private String multiModalAgentDesc;
+
     @Value("${autobots.autoagent.tool.file_tool.desc:}")
     private String fileToolDesc;
 
@@ -119,6 +125,24 @@ public class GenieConfig {
     @Value("${autobots.autoagent.tool.report_tool.params:{}}")
     public void setHtmlToolPamras(String jsonStr) {
         this.reportToolPamras = JSON.parseObject(jsonStr, Map.class);
+    }
+
+    /**
+     * KnowledgeTool 配置
+     */
+    private Map<String, Object> KnowledgeToolPamras = new HashMap<>();
+    @Value("${autobots.autoagent.tool.Knowledge_tool.params:{}}")
+    public void setKnowledgeToolPamras(String jsonStr) {
+        this.KnowledgeToolPamras = JSON.parseObject(jsonStr, Map.class);
+    }
+
+    /**
+     * KnowledgeTool 配置
+     */
+    private Map<String, Object> MultiModalAgentPamras = new HashMap<>();
+    @Value("${autobots.autoagent.tool.multimodalagent_tool.params:{}}")
+    public void setMultiModalAgentPamras(String jsonStr) {
+        this.MultiModalAgentPamras = JSON.parseObject(jsonStr, Map.class);
     }
 
     /**
@@ -216,6 +240,9 @@ public class GenieConfig {
     @Value("${autobots.autoagent.knowledge_url:}")
     private String autoBotsKnowledgeUrl;
 
+    @Value("${autobots.autoagent.multimodalagent_url:}")
+    private String multiModalAgentUrl;
+
     @Value("${autobots.autoagent.data_analysis_url:}")
     private String dataAnalysisUrl;
 
@@ -269,6 +296,4 @@ public class GenieConfig {
 
     @Value("${autobots.autoagent.tool.task_complete_desc:当前task完成，请将当前task标记为 completed}")
     private String taskCompleteDesc;
-
-
 }

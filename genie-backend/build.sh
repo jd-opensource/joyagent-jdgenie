@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # 需安装 jdk17
 # export JAVA_HOME="<you jdk path>"

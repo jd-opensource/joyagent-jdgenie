@@ -89,6 +89,27 @@ cp .env_template .env
 最后通过
 uv run python server.py 启动服务即可
 
+对于多模态子模块，需要配置`.env`中MRAG中相关的配置。
+
+- 3.1 建议从`https://dashscope.aliyuncs.com`申请key并替换文件中的key。
+
+- 3.2 本地启动qdrant, https://qdrant.tech/documentation/quickstart/ 或申请官方资源。
+
+- 3.3 初始化数据 
+
+需要将数据放到
+
+```
+genie-tool/genie_tool/tool/mrag/mrag_data
+```
+
+然后提交初始化数据的任务
+
+```
+uv run python -m genie_tool/tool/mrag/init/init_db
+```
+
+**注意：数据初始化过程中tool的server服务不能停止。**
 
 ## Step 4: 启动mcp 服务
 

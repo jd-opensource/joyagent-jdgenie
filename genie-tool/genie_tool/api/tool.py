@@ -18,7 +18,9 @@ from jinja2 import Template
 from sse_starlette import ServerSentEvent, EventSourceResponse
 
 from genie_tool.model.code import ActionOutput, CodeOuput
-from genie_tool.model.protocal import TableRAGRequest, AutoAnalysisRequest, CIRequest, CalEngineRequest, ReportRequest, DeepSearchRequest, NL2SQLRequest, SopChooseRequest
+from genie_tool.model.protocal import TableRAGRequest, AutoAnalysisRequest, CIRequest, CalEngineRequest, ReportRequest, \
+    DeepSearchRequest, NL2SQLRequest, SopChooseRequest, MultimodalRAGRequest
+from genie_tool.tool.mrag.query import AgenticRAG
 from genie_tool.util.file_util import upload_file
 from genie_tool.util.llm_util import ask_llm
 from genie_tool.util.prompt_util import get_prompt
@@ -30,6 +32,7 @@ from genie_tool.tool.auto_analysis import AutoAnalysisAgent
 from genie_tool.tool.nl2sql import NL2SQLAgent
 from genie_tool.tool.table_rag import TableRAGAgent
 from genie_tool.tool.plan_sop import PlanSOP
+from genie_tool.util.log_util import logger
 load_dotenv()
 
 
@@ -422,3 +425,25 @@ async def post_sop_recall(
     return {"code": 200, "data": {"sop_mode": sop_mode, "choosed_sop_string": choosed_sop_string}, "requestId": body.request_id}
 
 
+
+
+@router.post("/mragQuery")
+async def chat_completion(request: MultimodalRAGRequest):
+    """
+    处理聊天完成请求
+    """
+    # 调用LLM模型生成回复
+    kb_id = request.kb_id
+    if not kb_id:
+        kb_id = os.getenv("DEFAULT_KB_ID")
+
+    logger.info(f"kb_id:{kb_id}")
+    agent = AgenticRAG(kb_id=kb_id, n_round=3)
+
+    def generator():
+        for chunk in agent.run(request.question, request.image_urls):
+            yield chunk.model_dump_json()
+
+        yield "[DONE]"
+
+    return EventSourceResponse(generator())

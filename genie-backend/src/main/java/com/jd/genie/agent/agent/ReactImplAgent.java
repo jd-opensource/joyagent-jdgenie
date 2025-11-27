@@ -136,7 +136,7 @@ public class ReactImplAgent extends ReActAgent {
         List<String> results = new ArrayList<>();
         for (ToolCall command : toolCalls) {
             String result = toolResults.get(command.getId());
-            if (!Arrays.asList("code_interpreter", "report_tool", "file_tool", "deep_search", "data_analysis").contains(command.getFunction().getName())) {
+            if (!Arrays.asList("code_interpreter", "report_tool", "file_tool", "knowledge_tool", "deep_search", "data_analysis").contains(command.getFunction().getName())) {
                 String toolName = command.getFunction().getName();
                 printer.send("tool_result", AgentResponse.ToolResult.builder()
                         .toolName(toolName)

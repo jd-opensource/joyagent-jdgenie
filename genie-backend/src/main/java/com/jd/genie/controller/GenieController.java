@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.UnsupportedEncodingException;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -197,7 +196,7 @@ public class GenieController {
             toolCollection.addTool(fileTool);
             // default tool
             List<String> agentToolList = Arrays.asList(genieConfig.getMultiAgentToolListMap()
-                    .getOrDefault("default", "search,code,report").split(","));
+                    .getOrDefault("default", "search,code,report,multimodalagent").split(","));
             if (!agentToolList.isEmpty()) {
                 if (agentToolList.contains("code")) {
                     CodeInterpreterTool codeTool = new CodeInterpreterTool();
@@ -218,6 +217,11 @@ public class GenieController {
                     DataAnalysisTool dataAnalysisTool = new DataAnalysisTool();
                     dataAnalysisTool.setAgentContext(agentContext);
                     toolCollection.addTool(dataAnalysisTool);
+                }
+                if (agentToolList.contains("multimodalagent")) {
+                    MultiModalAgent multimodalagent = new MultiModalAgent();
+                    multimodalagent.setAgentContext(agentContext);
+                    toolCollection.addTool(multimodalagent);
                 }
             }
         }

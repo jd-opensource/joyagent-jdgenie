@@ -123,3 +123,9 @@ class SopChooseRequest(BaseModel):
     query: str = Field(description="用户问题")
     sop_list: Optional[List[Dict]] = Field(default=[],
         alias="sopList", description="SOP 列表，包含每一个sop")
+
+
+class MultimodalRAGRequest(BaseModel):
+    question: str = ""
+    image_urls: List[str] = Field(default_factory=list)
+    kb_id: Optional[str] = ""

@@ -18,7 +18,7 @@ RUN chmod +x build.sh start.sh
 RUN ./build.sh
 
 # Python 环境准备阶段
-FROM docker.m.daocloud.io/library/python:3.11-slim as python-base
+FROM docker.m.daocloud.io/library/python:3.13-bookworm as python-base
 WORKDIR /app
 
 RUN rm /etc/apt/sources.list.d/* && echo 'deb https://mirrors.aliyun.com/debian/ bookworm main contrib non-free non-free-firmware' \
@@ -39,7 +39,7 @@ RUN apt-get clean && \
 RUN pip install uv
 
 # 最终运行阶段
-FROM docker.m.daocloud.io/library/python:3.11-slim
+FROM docker.m.daocloud.io/library/python:3.13-bookworm
 
 # 安装系统依赖
 RUN rm /etc/apt/sources.list.d/* && echo 'deb https://mirrors.aliyun.com/debian/ bookworm main contrib non-free non-free-firmware' \
@@ -54,6 +54,7 @@ RUN apt-get clean && \
     openjdk-17-jre-headless \
     netcat-openbsd \
     procps \
+    poppler \
     curl \
     nodejs \
     npm \
@@ -117,4 +118,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:3000 || exit 1
 
 # 启动所有服务
-CMD ["./start_genie.sh"]
+CMD ["/bin/bash", "-c", "./start_genie.sh"]

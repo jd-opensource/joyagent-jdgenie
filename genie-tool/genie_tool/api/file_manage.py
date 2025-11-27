@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse, Response, FileResponse
 from genie_tool.model.protocal import FileRequest, FileListRequest, FileUploadRequest, get_file_id
 from genie_tool.util.middleware_util import RequestHandlerRoute
 from genie_tool.db.file_table_op import FileInfoOp, get_file_preview_url, get_file_download_url
-
+from genie_tool.util.log_util import logger
 
 router = APIRouter(route_class=RequestHandlerRoute)
 
@@ -32,6 +32,7 @@ async def get_file(
 async def upload_file(
         body: FileUploadRequest
 ):
+    logger.info(f"upload file: {body}")
     file_info = await FileInfoOp.add_by_content(
         filename=body.file_name, content=body.content, file_id=body.file_id, description=body.description,
         request_id=body.request_id)

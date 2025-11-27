@@ -35,7 +35,7 @@ JoyAgent多模态知识管理整体分为知识加工层，知识使用和知识
 | ![](./docs/img/mrag/gzjzz.png) <br> ![](./docs/img/mrag/example2.png) | ![](./docs/img/mrag/example3.png) <br> ![](./docs/img/mrag/example4.png) |
 
 ## 部署使用指南
-<iframe src="//player.bilibili.com/player.html?isOutside=true&aid=115615268405740&bvid=BV1EBUYBjEmX&cid=34278803675&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" width="100%" height="600"></iframe>
+📺 [部署使用指南视频](https://www.bilibili.com/video/BV1EBUYBjEmX )
 
 ## 效果先进性：DoubleBench数据集测评
 

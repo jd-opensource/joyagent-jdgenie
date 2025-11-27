@@ -73,6 +73,7 @@ public class EventResult {
         add("html");
         add("markdown");
         add("deep_search");
+        add("multimodalagent_tool");
         add("tool_thought");
         add("data_analysis");
     }};

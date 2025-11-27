@@ -47,3 +47,8 @@ cp .env_template .env
 uv run python server.py
 ```
 
+mrag需要初始化知识库
+```bash
+cd genie-tool
+python -m genie_tool.tool.mrag.init.init_db
+```

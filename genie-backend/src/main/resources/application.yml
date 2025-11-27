@@ -37,10 +37,10 @@ logging:
     root: INFO
 llm:
   default:
-    base_url: '<input llm server here>'
-    apikey: '<input llm key here>'
+    base_url: 'xxx'
+    apikey: 'xxx'
     interface_url: '/chat/completions'
-    model: gpt-4.1
+    model: DeepSeek-V3-0324
     max_tokens: 16384
   settings: '{"claude-3-7-sonnet-v1": {
         "model": "claude-3-7-sonnet-v1",
@@ -91,6 +91,9 @@ autobots:
       report_tool:
         desc: 这是一个专业的Markdown、PPT和HTML的生成工具，可以用于输出 html 格式的网页报告、PPT 或者 markdown 格式的报告，生成报告或者需要输出 Markdown 或者 HTML 或者 PPT 格式时，一定使用此工具生成报告。（如果没有明确的格式要求默认生成 Markdown 格式的），不要重复生成相同、类似的报告。这不是查数工具，严禁用此工具查询数据。不同入参之间都应该是跟任务强相关的，同时文件名称、文件描述和任务描述之间都应该是围绕完成任务目标生成的。
         params: '{"type":"object","properties":{"fileDescription":{"description":"生成报告的文件描述，一定是跟用户的任务强相关的","type":"string"},"fileName":{"description":"生成的文件名称，文件的前缀中文名称一定是跟用户的任务和文件内容强相关，如果是markdown，则文件名称后缀是 .md，如果是ppt、html文件，则是文件名称后缀是 .html，一定要包含文件后缀。文件名称不能使用特殊符号，不能使用、，？等符号，如果需要，可以使用下划线_。","type":"string"},"task":{"description":"生成文件任务的具体要求及详细描述，以及需要在报告中体现的内容，例如，上下文中需要输出的数据细节。","type":"string"},"fileType":{"description":"仅支持 markdown ppt 和 html 三种类型，如果指定了输出 html 或 网页版 格式，则是html，如果指定了输出 ppt、pptx 则是 ppt，否则使用 markdown 。","type":"string"}},"required":["fileType","task","fileName","fileDescription"]}'
+      multimodalagent_tool:
+        desc: 这是一个专业的用户多模态知识检索工具，可用于查询与用户相关的知识信息，作为在线知识的补充。支持文本和图像等多模态数据检索，能够高效访问和获取用户专属的知识内容。不同查询请求应紧密围绕具体任务目标，所有查询参数及结果均需与任务高度相关，避免重复或无关的查询。
+        params: '{"type":"object","properties":{"question":{"description":"查询所需要的question，需要在知识库中进行检索的检索短语或句子。","type":"string"}},"required":["question"]}'
       file_tool:
         desc: '这是一个文件读写的工具，支持写文件操作upload和获取文件操作get的命令，不支持写入以 .xlsx 为后缀的格式文件。不擅长写报告的HTML和Markdown类型文件，当有这些类型的文件需要写入或保存时，优先使用其它工具。
 
@@ -128,6 +131,7 @@ autobots:
     mcp_client_url: "http://127.0.0.1:8188"
     mcp_server_url: "https://mcp.api-inference.modelscope.net/1784ac5c6d0044/sse"
     knowledge_url: "http://127.0.0.1:1601"
+    multimodalagent_url: "http://127.0.0.1:1601"
     data_analysis_url: "http://127.0.0.1:1601"
     summary:
       system_prompt: "# 角色

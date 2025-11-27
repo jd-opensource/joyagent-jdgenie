@@ -22,9 +22,10 @@ class _FileDB(object):
             file_name = f"{file_name}.txt"
 
         save_path = os.path.join(self._work_dir, scope)
+        save_path = save_path.replace(":", "_")
         if not os.path.exists(save_path):
             os.makedirs(save_path)
-        with open(f"{save_path}/{file_name}", "w") as f:
+        with open(f"{save_path}/{file_name}", "w", encoding="utf-8") as f:
             f.write(content)
         return f"{save_path}/{file_name}"
     
