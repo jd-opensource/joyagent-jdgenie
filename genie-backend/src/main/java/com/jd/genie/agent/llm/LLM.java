@@ -124,6 +124,7 @@ public class LLM {
                     messageMap.put("content", claudeToolCalls);
                 } else {
                     messageMap.put("role", message.getRole().getValue());
+                    messageMap.put("content", null);
                     List<Map<String, Object>> toolCallsMap = JSON.parseObject(JSON.toJSONString(message.getToolCalls()),
                             new TypeReference<List<Map<String, Object>>>() {
                             });
