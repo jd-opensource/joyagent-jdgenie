@@ -1,5 +1,5 @@
 # 前端构建阶段
-FROM docker.m.daocloud.io/library/node:20-alpine as frontend-builder
+FROM docker.m.daocloud.io/library/node:20-alpine AS frontend-builder
 WORKDIR /app
 RUN npm install -g pnpm
 COPY ui/package.json ./
@@ -9,7 +9,7 @@ COPY ui/ .
 RUN pnpm build
 
 # 后端构建阶段
-FROM docker.m.daocloud.io/library/maven:3.8-openjdk-17 as backend-builder
+FROM docker.m.daocloud.io/library/maven:3.8-openjdk-17 AS backend-builder
 WORKDIR /app
 COPY genie-backend/pom.xml .
 COPY genie-backend/src ./src
@@ -18,7 +18,7 @@ RUN chmod +x build.sh start.sh
 RUN ./build.sh
 
 # Python 环境准备阶段
-FROM docker.m.daocloud.io/library/python:3.11-slim as python-base
+FROM docker.m.daocloud.io/library/python:3.11-slim AS python-base
 WORKDIR /app
 
 RUN rm /etc/apt/sources.list.d/* && echo 'deb https://mirrors.aliyun.com/debian/ bookworm main contrib non-free non-free-firmware' \
@@ -30,8 +30,7 @@ RUN rm /etc/apt/sources.list.d/* && echo 'deb https://mirrors.aliyun.com/debian/
 
 RUN apt-get clean && \
     apt-get update && \
-    apt-get install -y --no-install-recommends \
-    build-essential \
+  apt-get install -y --no-install-recommends \
     netcat-openbsd \
     procps \
     curl \
@@ -55,10 +54,17 @@ RUN apt-get clean && \
     netcat-openbsd \
     procps \
     curl \
-    nodejs \
-    npm \
-    && rm -rf /var/lib/apt/lists/* \
-    && npm install -g pnpm
+  ca-certificates \
+  gnupg \
+  && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js 20 from NodeSource
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+  apt-get install -y nodejs && \
+  rm -rf /var/lib/apt/lists/*
+
+# Enable corepack and install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # 设置工作目录
 WORKDIR /app
