@@ -252,5 +252,16 @@ public class GenieConfig {
     @Value("${autobots.autoagent.tool.task_complete_desc:当前task完成，请将当前task标记为 completed}")
     private String taskCompleteDesc;
 
+    @Value("${server.ip:127.0.0.1}")
+    private String serverIp;
+    public String getServerIp() {
+        return serverIp;
+    }
+
+    @Value("${server.port:8080}")
+    private Integer serverPort;
+    public Integer getServerPort() {
+        return serverPort;
+    }
 
 }

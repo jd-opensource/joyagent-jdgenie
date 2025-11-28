@@ -89,3 +89,6 @@ ol {
 .lottie{
   height: 80px !important;
 }
+code, kbd, samp, pre{
+  color:wheat !important;
+}

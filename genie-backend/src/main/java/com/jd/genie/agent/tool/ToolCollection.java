@@ -5,6 +5,7 @@ import com.jd.genie.agent.agent.AgentContext;
 import com.jd.genie.agent.dto.tool.McpToolInfo;
 import com.jd.genie.agent.tool.mcp.McpTool;
 import lombok.Data;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -19,6 +20,7 @@ import java.util.Map;
 public class ToolCollection {
     private Map<String, BaseTool> toolMap;
     private Map<String, McpToolInfo> mcpToolMap;
+    @ToString.Exclude
     private AgentContext agentContext;
 
     /**

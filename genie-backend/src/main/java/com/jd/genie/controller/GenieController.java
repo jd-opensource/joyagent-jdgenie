@@ -126,7 +126,7 @@ public class GenieController {
                 Printer printer = new SSEPrinter(emitter, request, request.getAgentType());
                 AgentContext agentContext = AgentContext.builder()
                         .requestId(request.getRequestId())
-                        .sessionId(request.getRequestId())
+                        .sessionId(request.getSessionId())
                         .printer(printer)
                         .query(request.getQuery())
                         .task("")

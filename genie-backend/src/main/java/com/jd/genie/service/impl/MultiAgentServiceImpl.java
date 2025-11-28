@@ -129,7 +129,7 @@ public class MultiAgentServiceImpl implements IMultiAgentService {
     private Request buildHttpRequest(AgentRequest autoReq) {
         String reqId = autoReq.getRequestId();
         autoReq.setRequestId(autoReq.getRequestId());
-        String url = "http://127.0.0.1:8080/AutoAgent";
+        String url = "http://" + genieConfig.getServerIp() + ":" + genieConfig.getServerPort() + "/AutoAgent";
         RequestBody body = RequestBody.create(
                 MediaType.parse("application/json"),
                 JSONObject.toJSONString(autoReq)
@@ -158,6 +158,7 @@ public class MultiAgentServiceImpl implements IMultiAgentService {
     private AgentRequest buildAgentRequest(GptQueryReq req) {
         AgentRequest request = new AgentRequest();
         request.setRequestId(req.getTraceId());
+        request.setSessionId(req.getSessionId());
         request.setErp(req.getUser());
         request.setQuery(req.getQuery());
         request.setAgentType(req.getDeepThink() == 0 ? 5: 3);

@@ -240,7 +240,7 @@ public class LLM {
             // 处理非流式请求
             if (!stream) {
                 params.put("stream", false);
-
+                params.put("enable_thinking",false);
                 // 调用 API
                 CompletableFuture<String> future = callOpenAI(params);
 
@@ -466,6 +466,7 @@ public class LLM {
             log.info("{} call llm request {}", context.getRequestId(), JSONObject.toJSONString(params));
             if (!stream) {
                 params.put("stream", false);
+                params.put("enable_thinking",false);
                 // 调用 API
                 CompletableFuture<String> future = callOpenAI(params, timeout);
                 return future.thenApply(responseJson -> {
@@ -718,7 +719,9 @@ public class LLM {
                                                             currentToolCall.function = toolCall.function;
                                                         }
                                                         if (Objects.nonNull(toolCall.function.arguments)) {
-                                                            currentToolCall.function.arguments += toolCall.function.arguments;
+                                                            if (!currentToolCall.function.arguments.equals(toolCall.function.arguments)) {
+                                                                currentToolCall.function.arguments += toolCall.function.arguments;
+                                                            }
                                                         }
                                                     }
                                                     openToolCallsMap.put(toolCall.index, currentToolCall);

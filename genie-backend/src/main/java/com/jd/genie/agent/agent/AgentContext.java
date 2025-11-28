@@ -5,10 +5,7 @@ import com.jd.genie.agent.printer.Printer;
 import com.jd.genie.agent.tool.ToolCollection;
 import com.jd.genie.model.dto.FileInformation;
 import com.jd.genie.model.req.AgentRequest;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -24,6 +21,7 @@ public class AgentContext {
     String query;
     String task;
     Printer printer;
+    @ToString.Exclude
     ToolCollection toolCollection;
     String dateInfo;
     List<File> productFiles;

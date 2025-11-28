@@ -19,6 +19,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class AgentRequest {
     private String requestId;
+    private String sessionId;
     private String erp;
     private String query;
     private Integer agentType;

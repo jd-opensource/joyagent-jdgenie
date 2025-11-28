@@ -30,7 +30,7 @@ public class CodeInterpreterTool implements BaseTool {
 
     @Override
     public String getName() {
-        return "code_interpreter";
+        return "code_interpreter_tool";
     }
 
     @Override
