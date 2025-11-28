@@ -19,8 +19,13 @@ if command -v java &> /dev/null; then
     JAVA_VERSION=$(java -version 2>&1 | head -n 1 | cut -d'"' -f2)
     JAVA_MAJOR=$(echo $JAVA_VERSION | cut -d'.' -f1)
     
-    if [[ "$JAVA_VERSION" == *"1."* ]]; then
+    # Java版本解析逻辑
+    if [[ "$JAVA_VERSION" == 1.* ]]; then
+        # 旧版本格式 (如 1.8.0_XXX)
         JAVA_MAJOR=$(echo $JAVA_VERSION | cut -d'.' -f2)
+    else
+        # 新版本格式 (如 11.0.1, 17.0.2, 21.0.1)
+        JAVA_MAJOR=$(echo $JAVA_VERSION | cut -d'.' -f1)
     fi
     
     if [ "$JAVA_MAJOR" -ge 17 ]; then
