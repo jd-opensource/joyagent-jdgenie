@@ -20,6 +20,7 @@ from genie_tool.util.log_util import timer
 @timer()
 async def query_decompose(
         query: str,
+        retrieval_str: str = "",
         **kwargs
 ):
     model = os.getenv("QUERY_DECOMPOSE_MODEL", "gpt-4.1")
@@ -29,7 +30,7 @@ async def query_decompose(
     # think
     think_content = ""
     async for chunk in ask_llm(
-            messages=decompose_prompt["query_decompose_think_prompt"].format(task=query, retrieval_str=""),
+            messages=decompose_prompt["query_decompose_think_prompt"].format(task=query, retrieval_str=retrieval_str),
             model=think_model,
             stream=True,
             only_content=True,  # 只返回内容
