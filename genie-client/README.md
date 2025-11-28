@@ -448,7 +448,7 @@ curl -X POST 'http://localhost:8188/v1/tool/list' -H "Content-Type: application/
 ### 3、工具调用接口
 
 ```bash
-curl -X POST 'http://localhost:8188/call_tool' -H "Content-Type: application/json" -d '{
+curl -X POST 'http://localhost:8188/v1/tool/call' -H "Content-Type: application/json" -d '{
     "server_url": "https://mcp.amap.com/sse?key=xxxxxxxxxxxx",
     "name": "maps_geo",
     "arguments": {
