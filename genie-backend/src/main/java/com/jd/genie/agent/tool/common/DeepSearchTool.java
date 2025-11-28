@@ -83,6 +83,7 @@ public class DeepSearchTool implements BaseTool {
                     .query(query)
                     .agent_id("1")
                     .scene_type("auto_agent")
+                    .max_loop(genieConfig.getDeepSearchToolMaxLoop())
                     .src_configs(srcConfig)
                     .stream(true)
                     .content_stream(agentContext.getIsStream())

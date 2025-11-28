@@ -14,6 +14,7 @@ import java.util.Map;
 public class DeepSearchRequest {
     private String request_id;
     private String query;
+    private Integer max_loop;
     private String erp;
     private String agent_id;
     private Map<String, Object> optional_configs;

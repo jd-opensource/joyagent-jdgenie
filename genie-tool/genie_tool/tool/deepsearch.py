@@ -62,15 +62,17 @@ class DeepSearch:
         """深度搜索回复（流式）"""
 
         current_loop = 1
+        # 因后续模型可能会重写查询语句,故进行区分
+        loop_query = query
         # 执行深度搜索循环
         while current_loop <= max_loop:
             logger.info(f"{request_id} 第 {current_loop} 轮深度搜索...")
             # 查询分解
-            sub_queries = await query_decompose(query=query)
+            sub_queries = await query_decompose(query=loop_query)
 
             yield json.dumps({
                 "requestId": request_id,
-                "query": query,
+                "query": loop_query,
                 "searchResult": {"query": sub_queries, "docs": [[]] * len(sub_queries)},
                 "isFinal": False,
                 "messageType": "extend"
@@ -91,7 +93,7 @@ class DeepSearch:
             yield json.dumps(
                 {
                     "requestId": request_id,
-                    "query": query,
+                    "query": loop_query,
                     "searchResult": {
                         "query": sub_queries,
                         "docs": [[d.to_dict(truncate_len=truncate_len) for d in docs_l] for docs_l in docs_list]
@@ -109,9 +111,9 @@ class DeepSearch:
                 break
 
             # 推理验证是否需要继续搜索
-            reasoning_result = search_reasoning(
+            reasoning_result = await search_reasoning(
                 request_id=request_id,
-                query=query,
+                query=loop_query,
                 content=self.search_docs_str(os.getenv("SEARCH_REASONING_MODEL")),
             )
 
@@ -119,13 +121,16 @@ class DeepSearch:
             if reasoning_result.get("is_verify", "1") in ["1", 1]:
                 logger.info(f"{request_id} reasoning 判断没有得到新的查询，流程结束")
                 break
-
+            # 采用模型提出的新搜索语句进行搜索
+            if reasoning_result.get('rewrite_query',""):
+                loop_query = reasoning_result.get('rewrite_query',"")
             current_loop += 1
 
         # 生成最终答案
         answer = ""
         acc_content = ""
         acc_token = 0
+        # 此处是对用户问题的回答因此不用loop_query
         async for chunk in answer_question(
                 query=query, search_content=self.search_docs_str(os.getenv("SEARCH_ANSWER_MODEL"))
         ):

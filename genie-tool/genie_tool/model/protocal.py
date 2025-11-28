@@ -66,7 +66,7 @@ class FileUploadRequest(FileRequest):
 class DeepSearchRequest(BaseModel):
     request_id: str = Field(description="Request ID")
     query: str = Field(description="搜索查询")
-    max_loop: Optional[int] = Field(default=1, alias="maxLoop", description="最大循环次数")
+    max_loop: Optional[int] = Field(default=1, description="最大循环次数")
 
     # bing, jina, sogou
     search_engines: List[str] = Field(default=[], description="使用哪些搜索引擎")

@@ -54,7 +54,7 @@ class SearchBase(ABC):
             tasks = [tg.create_task(_parser(doc.link, timeout)) for doc in docs]
         results = [BeautifulSoup(task.result(), "html.parser") for task in tasks]
         results = [soup.get_text() if soup.get_text() and len(soup.get_text().strip()) > 50 else str(soup.text) for soup in results]
-        for doc, result in zip(tasks, results):
+        for doc, result in zip(docs, results):
             if result:
                 doc.content = result
         return docs

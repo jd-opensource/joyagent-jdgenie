@@ -145,6 +145,9 @@ public class GenieConfig {
     @Value("${autobots.autoagent.tool.deep_search.message.truncate_len:500}")
     private Integer deepSearchToolMessageTruncateLen;
 
+    @Value("${autobots.autoagent.tool.deep_search.max_loop:1}")
+    private Integer deepSearchToolMaxLoop;
+
     @Value("${autobots.autoagent.planner.pre_prompt:分析问题并制定计划：}")
     private String planPrePrompt;
 

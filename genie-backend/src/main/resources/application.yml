@@ -86,6 +86,7 @@ autobots:
       deep_search:
         params: '{"type":"object","properties":{"query":{"description":"需要搜索的全部内容及描述","type":"string"}},"required":["query"]}'
         page_count: 5
+        max_loop: 1
         src_config: '{}'
         message:
           truncate_len: 20000
