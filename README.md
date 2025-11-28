@@ -240,6 +240,7 @@ JoyAgent-JDGenie是一个通用的多智能体框架，对于用户需要定制�
 
 手动更新 genie-tool/.env_template 中的 OPENAI_API_KEY、OPENAI_BASE_URL、DEFAULT_MODEL、SERPER_SEARCH_API_KEY
 使用DeepSeek时: 设置DEEPSEEK_API_KEY、DEEPSEEK_API_BASE，DEFAULT_MODEL 设置为 deepseek/deepseek-chat，所有 ${DEFAULT_MODEL} 也都改成deepseek/deepseek-chat
+使用阿里百炼平台的模型时: 设置OPENAI_API_KEY、OPENAI_BASE_URL，模型名字需要带个前缀 openai/，如: openai/qwen-turbo 用于兼容openai模型
 
 3. 编译dockerfile
 docker build -t genie:latest .

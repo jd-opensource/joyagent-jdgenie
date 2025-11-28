@@ -700,7 +700,6 @@ public class LLM {
                                             // tool call
                                             if (Objects.nonNull(choice.delta.tool_calls)) {
                                                 List<OpenAIToolCall> openAIToolCalls = choice.delta.tool_calls;
-                                                // log.info("{} recv tool call data: {}", context.getRequestId(), openAIToolCalls);
                                                 for (OpenAIToolCall toolCall : openAIToolCalls) {
                                                     OpenAIToolCall currentToolCall = openToolCallsMap.get(toolCall.index);
                                                     if (Objects.isNull(currentToolCall)) {
@@ -714,8 +713,12 @@ public class LLM {
                                                         currentToolCall.type = toolCall.type;
                                                     }
                                                     if (Objects.nonNull(toolCall.function)) {
+                                                        if (Objects.isNull(currentToolCall.function)) {
+                                                            currentToolCall.function = new OpenAIFunction();
+                                                            currentToolCall.function.arguments = "";
+                                                        }
                                                         if (Objects.nonNull(toolCall.function.name)) {
-                                                            currentToolCall.function = toolCall.function;
+                                                            currentToolCall.function.name = toolCall.function.name;
                                                         }
                                                         if (Objects.nonNull(toolCall.function.arguments)) {
                                                             currentToolCall.function.arguments += toolCall.function.arguments;
