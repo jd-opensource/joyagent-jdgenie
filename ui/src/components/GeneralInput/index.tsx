@@ -125,7 +125,7 @@ const GeneralInput: GenieType.FC<Props> = (props) => {
         <div className="h-30 flex justify-between items-center mt-[6px]">
           {showBtn ? (
             <Button
-              color={deepThink ? "primary" : "default"}
+              type={deepThink ? "primary" : "default"}
               variant="outlined"
               className={classNames(
                 "text-[12px] p-[8px] h-[28px] transition-all hover:text-[#333] hover:bg-[rgba(64,64,255,0.02)] hover:border-[rgba(64,64,255,0.2)]",
