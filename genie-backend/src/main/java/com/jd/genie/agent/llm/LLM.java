@@ -705,6 +705,8 @@ public class LLM {
                                                     OpenAIToolCall currentToolCall = openToolCallsMap.get(toolCall.index);
                                                     if (Objects.isNull(currentToolCall)) {
                                                         currentToolCall = new OpenAIToolCall();
+                                                        currentToolCall.function = new OpenAIFunction();
+                                                        currentToolCall.function.arguments = "";
                                                     }
                                                     // [{"index":0,"id":"call_j74R8JMFWTC4rW5wHJ0TtmNU","type":"function","function":{"name":"planning","arguments":""}}]
                                                     if (Objects.nonNull(toolCall.id)) {
@@ -715,7 +717,7 @@ public class LLM {
                                                     }
                                                     if (Objects.nonNull(toolCall.function)) {
                                                         if (Objects.nonNull(toolCall.function.name)) {
-                                                            currentToolCall.function = toolCall.function;
+                                                            currentToolCall.function.name = toolCall.function.name;
                                                         }
                                                         if (Objects.nonNull(toolCall.function.arguments)) {
                                                             currentToolCall.function.arguments += toolCall.function.arguments;
