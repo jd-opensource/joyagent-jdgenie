@@ -2,7 +2,7 @@
 
 # 开始启动后端程序
 BASEDIR="./target/genie-backend"
-CLASSPATH="$BASEDIR/conf/:$BASEDIR/lib/*"
+CLASSPATH=".\target\classes;$BASEDIR\conf;$BASEDIR\lib\*;"
 MAIN_MODULE="com.jd.genie.GenieApplication"
 LOGFILE="./genie-backend_startup.log"
 

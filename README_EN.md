@@ -267,7 +267,8 @@ If you encounter deployment issues, refer to this video tutorial:【5分钟使�
   - pip install uv
   - cd genie-tool
   - uv sync
-  - source .venv/bin/activate
+  - source .venv/bin/activate # Linux/MacOS
+  - . .venv/Scripts/activate # Windows
 
 #### Option 1: Step-by-Step Manual Deployment
 Ultra-detailed guide reference: [Step by Step](./Deploy.md)

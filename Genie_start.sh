@@ -122,7 +122,16 @@ init_setup() {
     fi
     
     # 激活虚拟环境并初始化数据库
-    source .venv/bin/activate
+    if [ -f ".venv/Scripts/activate" ]; then
+        . .venv/Scripts/activate; # Windows 环境
+    elif [ -f ".venv/bin/activate" ]; then
+        . .venv/bin/activate; # Linux/Mac 环境
+    else
+        echo -e "${YELLOW}❌ 虚拟环境激活脚本不存在${NC}"
+        cd ..
+        return 1
+    fi
+
     echo -e "${BLUE}初始化数据库...${NC}"
     if python -m genie_tool.db.db_engine; then
         echo -e "${GREEN}✅ 数据库初始化成功${NC}"
@@ -193,7 +202,15 @@ start_tool_service() {
     fi
     
     # 激活虚拟环境并启动
-    source .venv/bin/activate
+    if [ -f ".venv/Scripts/activate" ]; then
+        . .venv/Scripts/activate; # Windows 环境
+    elif [ -f ".venv/bin/activate" ]; then
+        . .venv/bin/activate; # Linux/Mac 环境
+    else
+        echo -e "${YELLOW}❌ 虚拟环境激活脚本不存在${NC}"
+        cd ..
+        return 1
+    fi
     
     # 启动服务
     if [ -f "start.sh" ]; then
@@ -220,7 +237,15 @@ start_mcp_client() {
     fi
     
     # 激活虚拟环境并启动
-    source .venv/bin/activate
+    if [ -f ".venv/Scripts/activate" ]; then
+        . .venv/Scripts/activate; # Windows 环境
+    elif [ -f ".venv/bin/activate" ]; then
+        . .venv/bin/activate; # Linux/Mac 环境
+    else
+        echo -e "${YELLOW}❌ 虚拟环境激活脚本不存在${NC}"
+        cd ..
+        return 1
+    fi
     
     if [ -f "start.sh" ]; then
         sh start.sh &

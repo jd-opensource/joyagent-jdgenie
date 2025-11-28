@@ -4,7 +4,8 @@
 
 ```bash
 uv venv
-source .venv/bin/activate
+source .venv/bin/activate # Linux/MacOS 执行
+. .venv/Scripts/activate # Windows 执行
 ```
 
 ## API 文档

@@ -1,4 +1,5 @@
 import os
+import re
 from typing import List
 
 from fastapi import UploadFile
@@ -15,16 +16,21 @@ class _FileDB(object):
         if not os.path.exists(self._work_dir):
             os.makedirs(self._work_dir)
 
+    def _sanitize_filename(self, name: str) -> str:
+        # 替换 Windows 非法字符：<>:"/\|?*
+        return re.sub(r'[<>:"/\\|?*]', '_', name)
+
     async def save(self, file_name, content, scope) -> str:
         if "." in file_name:
             file_name = os.path.basename(file_name)
         else:
             file_name = f"{file_name}.txt"
 
-        save_path = os.path.join(self._work_dir, scope)
+        safe_scope = self._sanitize_filename(scope or "default")
+        save_path = os.path.join(self._work_dir, safe_scope)
         if not os.path.exists(save_path):
             os.makedirs(save_path)
-        with open(f"{save_path}/{file_name}", "w") as f:
+        with open(f"{save_path}/{file_name}", "w", encoding='utf-8') as f:
             f.write(content)
         return f"{save_path}/{file_name}"
     

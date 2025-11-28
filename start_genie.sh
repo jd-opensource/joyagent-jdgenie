@@ -106,7 +106,15 @@ if [ -d "tool" ]; then
     # 初始化数据库
     echo "初始化数据库..."
     if [ -d ".venv" ]; then
-        . .venv/bin/activate
+         if [ -f ".venv/Scripts/activate" ]; then
+            . .venv/Scripts/activate; # Windows 环境
+        elif [ -f ".venv/bin/activate" ]; then
+            . .venv/bin/activate; # Linux/Mac 环境
+        else
+            echo -e "❌ 虚拟环境激活脚本不存在${NC}"
+            cd ..
+            return 1
+        fi
         echo "执行数据库初始化..."
         python -m genie_tool.db.db_engine
         echo "数据库初始化完成"

@@ -25,7 +25,8 @@ python 环境和依赖安装
 pip install uv
 cd genie-tool
 uv sync
-source .venv/bin/activate
+source .venv/bin/activate # Linux/MacOS 执行
+. .venv/Scripts/activate # Windows 执行
 ```
 
 首次启动，需要初始化数据库（后续不再需要）

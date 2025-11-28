@@ -260,7 +260,8 @@ docker run -d -p 3000:3000 -p 8080:8080 -p 1601:1601 --name genie-app genie:late
   - pip install uv
   - cd genie-tool
   - uv sync
-  - source .venv/bin/activate
+  - source .venv/bin/activate # Linux/MacOS 执行
+  - . .venv/Scripts/activate # Windows 执行
 
 #### 方案1：手动step by step部署手册
 手动超详细攻略参考 [Step by Step](./Deploy.md)

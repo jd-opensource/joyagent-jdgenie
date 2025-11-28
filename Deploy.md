@@ -15,7 +15,7 @@ mac用户安装
 
 然后通过，写入zshrc
 
-```
+```bash
 echo 'export JAVA_HOME=$(/usr/libexec/java_home)' >> ~/.zshrc
 echo 'export PATH=$JAVA_HOME/bin:$PATH' >> ~/.zshrc
 source ~/.zshrc
@@ -33,7 +33,9 @@ python
 
 打开一个终端
 
+```bash
 cd joyagent-jdgenie/ui && sh start.sh 
+```
 
 如果报错参见上面信息前期准备看看有没有pnpm
 
@@ -44,16 +46,22 @@ cd joyagent-jdgenie/ui && sh start.sh
 
 另外打开一个终端
 
+```bash
 cd joyagent-jdgenie/genie-backend && sh build.sh
+```
 
 出现[INFO] BUILD SUCCESS即可
 如有报错安装java>17,步骤见上
 
+```bash
 sh start.sh
+```
 
-启动后，可以通过命令tail -f genie-backend_startup.log观察日志情况。
+启动后，可以通过命令 `tail -f genie-backend_startup.log` 观察日志情况。
 
-ps 1: 可以动态适合自己key,编辑 joyagent-jdgenie/genie-backend/src/main/resources/application.yml,其中配置是可以添加多个模型，然后在不同模块下可以指定，比如在react模式下，我指定了claude-3-7-sonnet-v1，建议修改为适合自己的模型名字。
+> ps 1: 可以动态适合自己key,编辑 `joyagent-jdgenie/genie-backend/src/main/resources/application.yml`, 其中配置是可以添加多个模型，然后在不同模块下可以指定，比如在react模式下，我指定了claude-3-7-sonnet-v1，建议修改为适合自己的模型名字。
+
+```yml
 settings: '{"claude-3-7-sonnet-v1": {
         "model": "claude-3-7-sonnet-v1",
         "max_tokens": 8192,
@@ -61,9 +69,10 @@ settings: '{"claude-3-7-sonnet-v1": {
         "base_url": "<input llm server here>",
         "apikey": "<input llm key here>",
         "max_input_tokens": 128000
-}}'
+    }}'
+```
 
-ps 2:修改完配置后，重新build.sh,然后start.sh
+> ps 2:修改完配置后，重新 `build.sh`,然后 `start.sh`
 
 ---
 
@@ -72,32 +81,36 @@ ps 2:修改完配置后，重新build.sh,然后start.sh
 
 另外打开一个终端
 
-```
+```bash
 cd joyagent-jdgenie/genie-tool
 pip install uv
 cd genie-tool
 uv sync
-source .venv/bin/activate
+source .venv/bin/activate # Linux/MacOS 执行
+. .venv/Scripts/activate # Windows 执行
 ```
 首次启动需要执行
-python -m genie_tool.db.db_engine
+`python -m genie_tool.db.db_engine`
 之后则无需执行。
 
 然后
-cp .env_template .env
-编辑.env文件, 其中需要配置SERPER_SEARCH_API_KEY，申请网址https://serper.dev/
-最后通过
-uv run python server.py 启动服务即可
+`cp .env_template .env`
+编辑 `.env` 文件, 其中需要配置 `SERPER_SEARCH_API_KEY`，申请网址：https://serper.dev/
+最后通过：
+`uv run python server.py` 启动服务即可
 
 
 ## Step 4: 启动mcp 服务
 
 另外打开一个终端
+
+```bash
 cd joyagent-jdgenie/genie-client
 uv venv
-source .venv/bin/activate
+source .venv/bin/activate # Linux/MacOS 执行
+. .venv/Scripts/activate # Windows 执行
 sh start.sh 即可
-
+```
 
 
 
