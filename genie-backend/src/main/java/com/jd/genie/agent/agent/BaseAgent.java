@@ -10,6 +10,7 @@ import com.jd.genie.agent.llm.LLM;
 import com.jd.genie.agent.printer.Printer;
 import com.jd.genie.agent.tool.ToolCollection;
 import com.jd.genie.agent.util.ThreadUtil;
+import com.jd.genie.util.JacksonUtil;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -120,7 +121,7 @@ public abstract class BaseAgent {
         String name = command.getFunction().getName();
         try {
             // 解析参数
-            ObjectMapper mapper = new ObjectMapper();
+            ObjectMapper mapper = JacksonUtil.getObjectMapper();
             Object args = mapper.readValue(command.getFunction().getArguments(), Object.class);
 
             // 执行工具

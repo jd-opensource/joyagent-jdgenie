@@ -24,7 +24,7 @@ class _FileDB(object):
         save_path = os.path.join(self._work_dir, scope)
         if not os.path.exists(save_path):
             os.makedirs(save_path)
-        with open(f"{save_path}/{file_name}", "w") as f:
+        with open(f"{save_path}/{file_name}", "w", encoding='utf-8') as f:
             f.write(content)
         return f"{save_path}/{file_name}"
     

@@ -16,6 +16,7 @@ import com.jd.genie.agent.tool.ToolCollection;
 import com.jd.genie.agent.util.SpringContextHolder;
 import com.jd.genie.agent.util.StringUtil;
 import com.jd.genie.config.GenieConfig;
+import com.jd.genie.util.JacksonUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -76,7 +77,7 @@ public class LLM {
 
         // 初始化 tokenizer
         this.tokenCounter = new TokenCounter();
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = JacksonUtil.getObjectMapper();
     }
 
     /**

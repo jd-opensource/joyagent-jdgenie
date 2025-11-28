@@ -16,6 +16,7 @@ from loguru import logger
 from starlette.middleware.cors import CORSMiddleware
 
 from genie_tool.util.middleware_util import UnknownException, HTTPProcessTimeMiddleware
+from genie_tool.db.db_engine import init_db
 
 load_dotenv()
 
@@ -70,6 +71,7 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     print(f"Start params: {options}")
+    init_db()
 
     uvicorn.run(
         app="server:app",
