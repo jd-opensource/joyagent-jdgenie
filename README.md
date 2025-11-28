@@ -12,7 +12,9 @@
 （注意使用data_agent分支）
 <img width="1200" height="675" alt="image" src="https://github.com/user-attachments/assets/3a449185-4863-4171-8dda-72cb70b2fa91" />
 
-**多模态RAG：敬请期待**
+[**<font color=red>多模态知识管理：面向多模态文档的综合性RAG平台，能够高效解析和查询多种内容形态的复杂文档，为复杂文档的智能问答与内容生成提供一站式解决方案。</font>**](README_mrag.md)
+（注意使用mrag分支）
+![](./docs/img/mrag/mrag_struct.png)
 ## 简介
 
 当前相关开源agent主要是SDK或者框架，用户还需基于此做进一步的开发，无法直接做到开箱即用。我们开源的JoyAgent-JDGenie是端到端的多Agent产品，对于输入的query或者任务，可以直接回答或者解决。例如用户query"给我做一个最近美元和黄金的走势分析"，JoyAgent-Genie可以直接给出网页版或者PPT版的报告文档。
