@@ -1,15 +1,20 @@
+ARG DOCKER_IMAGE=docker.m.daocloud.io
+ARG NPM_REGISTRY=https://registry.npmmirror.com
+ARG APK_MIRROR=mirrors.aliyun.com
+ARG PIP_MIRROR=https://mirrors.aliyun.com/pypi/simple
+
 # 前端构建阶段
-FROM docker.m.daocloud.io/library/node:20-alpine as frontend-builder
+FROM ${DOCKER_IMAGE}/library/node:20-alpine as frontend-builder
 WORKDIR /app
 RUN npm install -g pnpm
 COPY ui/package.json ./
-RUN npm config set registry https://registry.npmmirror.com
+RUN npm config set registry ${NPM_REGISTRY}
 RUN pnpm install
 COPY ui/ .
 RUN pnpm build
 
 # 后端构建阶段
-FROM docker.m.daocloud.io/library/maven:3.8-openjdk-17 as backend-builder
+FROM ${DOCKER_IMAGE}/library/maven:3.8-openjdk-17 as backend-builder
 WORKDIR /app
 COPY genie-backend/pom.xml .
 COPY genie-backend/src ./src
@@ -18,40 +23,23 @@ RUN chmod +x build.sh start.sh
 RUN ./build.sh
 
 # Python 环境准备阶段
-FROM docker.m.daocloud.io/library/python:3.11-slim as python-base
+FROM docker.m.daocloud.io/library/python:3.11-alpine as python-base
+ARG PIP_MIRROR
 WORKDIR /app
+RUN apk add --no-cache build-base curl netcat-openbsd procps
 
-RUN rm /etc/apt/sources.list.d/* && echo 'deb https://mirrors.aliyun.com/debian/ bookworm main contrib non-free non-free-firmware' \
-      > /etc/apt/sources.list && \
-    echo 'deb https://mirrors.aliyun.com/debian-security bookworm-security main contrib non-free non-free-firmware' \
-      >> /etc/apt/sources.list && \
-    echo 'deb https://mirrors.aliyun.com/debian/ bookworm-updates main contrib non-free non-free-firmware' \
-      >> /etc/apt/sources.list
-
-RUN apt-get clean && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
-    build-essential \
-    netcat-openbsd \
-    procps \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-RUN pip install uv
+RUN pip install uv -i ${PIP_MIRROR}
 
 # 最终运行阶段
-FROM docker.m.daocloud.io/library/python:3.11-slim
+FROM ${DOCKER_IMAGE}/library/python:3.11-alpine
+ARG APK_MIRROR
+ARG PIP_MIRROR
 
 # 安装系统依赖
-RUN rm /etc/apt/sources.list.d/* && echo 'deb https://mirrors.aliyun.com/debian/ bookworm main contrib non-free non-free-firmware' \
-      > /etc/apt/sources.list && \
-    echo 'deb https://mirrors.aliyun.com/debian-security bookworm-security main contrib non-free non-free-firmware' \
-      >> /etc/apt/sources.list && \
-    echo 'deb https://mirrors.aliyun.com/debian/ bookworm-updates main contrib non-free non-free-firmware' \
-      >> /etc/apt/sources.list
-RUN apt-get clean && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
-    openjdk-17-jre-headless \
+RUN sed -i "s/dl-cdn.alpinelinux.org/${APK_MIRROR}/g" /etc/apk/repositories
+
+RUN apk add --no-cache \
+    openjdk17-jre-headless \
     netcat-openbsd \
     procps \
     curl \
@@ -59,6 +47,8 @@ RUN apt-get clean && \
     npm \
     && rm -rf /var/lib/apt/lists/* \
     && npm install -g pnpm
+
+
 
 # 设置工作目录
 WORKDIR /app
@@ -85,7 +75,7 @@ COPY genie-client/main.py genie-client/server.py genie-client/start.sh ./
 RUN chmod +x start.sh && \
     uv venv .venv && \
     . .venv/bin/activate && \
-    export UV_DEFAULT_INDEX="https://pypi.tuna.tsinghua.edu.cn/simple" && uv sync
+    export UV_DEFAULT_INDEX="${PIP_MIRROR}" && uv sync
 
 # 复制 genie-tool
 WORKDIR /app/tool
@@ -97,7 +87,7 @@ COPY genie-tool/server.py genie-tool/start.sh genie-tool/.env_template ./
 RUN chmod +x start.sh && \
     uv venv .venv && \
     . .venv/bin/activate && \
-    export UV_DEFAULT_INDEX="https://pypi.tuna.tsinghua.edu.cn/simple" && uv sync && \
+    export UV_DEFAULT_INDEX="${PIP_MIRROR}" && uv sync && \
     mkdir -p /data/genie-tool && \
     cp .env_template .env && \
     python -m genie_tool.db.db_engine

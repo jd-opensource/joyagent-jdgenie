@@ -258,7 +258,29 @@ Open http://localhost:3000
 ```
 If you encounter deployment issues, refer to this video tutorial:【5分钟使用deepseek启动开源智能体应用joyagent-genie-哔哩哔哩】 https://b23.tv/8VQDBOK
 
-### Method 2: Manual Environment Initialization and Service Launch
+### Method 2: Docker-compose 
+
+> `application.yml` 和 `.env_template` 文件 修改后，重新执行 `docker-compose up -d`即可生效
+```
+1.git clone https://github.com/jd-opensource/joyagent-jdgenie.git
+
+2.Manually update the following configurations in genie-backend/src/main/resources/application.yml:
+base_url, apikey, model, max_tokens, model_name
+Note for DeepSeek users: Set max_tokens: 8192 for deepseek-chat
+
+Manually update the following environment variables in genie-tool/.env_template:
+OPENAI_API_KEY, OPENAI_BASE_URL, DEFAULT_MODEL, SERPER_SEARCH_API_KEY
+DeepSeek Configuration:Set DEEPSEEK_API_KEY and DEEPSEEK_API_BASE，Configure DEFAULT_MODEL = deepseek/deepseek-chat，
+Replace all occurrences of ${DEFAULT_MODEL} with deepseek/deepseek-chat
+
+3.Launch Docker Services
+docker-compose up -d
+
+4.Access Genie via browser
+Open http://localhost:3000
+```
+
+### Method 3: Manual Environment Initialization and Service Launch
 
 #### Prerequisites
 - jdk17

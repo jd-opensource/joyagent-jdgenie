@@ -251,7 +251,25 @@ docker run -d -p 3000:3000 -p 8080:8080 -p 1601:1601 --name genie-app genie:late
 ```
 如果部署遇到问题，可以参考视频:【5分钟使用deepseek启动开源智能体应用joyagent-genie-哔哩哔哩】 https://b23.tv/8VQDBOK
 
-### 方式2: 手动初始化环境，启动服务
+### 方式2: docker-compose
+
+> `application.yml` 和 `.env_template` 文件 修改后，重新执行 `docker-compose up -d`即可生效
+```
+1. git clone https://github.com/jd-opensource/joyagent-jdgenie.git
+
+2. 手动更新 genie-backend/src/main/resources/application.yml中 base_url、apikey、model、max_tokens、model_name等配置
+使用DeepSeek时: 注意deepseek-chat 为max_tokens: 8192
+
+手动更新 genie-tool/.env_template 中的 OPENAI_API_KEY、OPENAI_BASE_URL、DEFAULT_MODEL、SERPER_SEARCH_API_KEY
+使用DeepSeek时: 设置DEEPSEEK_API_KEY、DEEPSEEK_API_BASE，DEFAULT_MODEL 设置为 deepseek/deepseek-chat，所有 ${DEFAULT_MODEL} 也都改成deepseek/deepseek-chat
+
+3. 启动服务
+docker-compose up -d
+
+4. 浏览器输入 localhost:3000 访问genie
+```
+
+### 方式3: 手动初始化环境，启动服务
 
 #### 环境准备
 - jdk17

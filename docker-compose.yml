@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  build-service:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: genie:latest
+    ports:
+      - "3000:3000"
+      - "8080:8080"
+      - "1601:1601"
+    volumes:
+      - ./genie-backend/src/main/resources/application.yml:/app/backend/target/genie-backend/conf/application.yml
+      - ./genie-tool/.env_template:/app/tool/.env
