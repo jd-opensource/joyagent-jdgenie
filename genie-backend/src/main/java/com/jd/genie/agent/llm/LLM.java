@@ -714,10 +714,16 @@ public class LLM {
                                                         currentToolCall.type = toolCall.type;
                                                     }
                                                     if (Objects.nonNull(toolCall.function)) {
+                                                        if (Objects.isNull(currentToolCall.function)) {
+                                                            currentToolCall.function = new OpenAIFunction();
+                                                        }
                                                         if (Objects.nonNull(toolCall.function.name)) {
-                                                            currentToolCall.function = toolCall.function;
+                                                            currentToolCall.function.name = toolCall.function.name;
                                                         }
                                                         if (Objects.nonNull(toolCall.function.arguments)) {
+                                                            if (Objects.isNull(currentToolCall.function.arguments)) {
+                                                                currentToolCall.function.arguments = "";
+                                                            }
                                                             currentToolCall.function.arguments += toolCall.function.arguments;
                                                         }
                                                     }
