@@ -5,14 +5,18 @@
 **解决快速构建多智能体产品的最后一公里问题**
 
 ## new release
+多模态知识管理平台是一款面向多模态非结构化知识的RAG解决方案，集成解析、检索与生成能力，能够高效处理复杂文档，为智能问答与内容生成提供一站式支持。
+
+[**<font color=red>多模态知识管理：面向多模态文档的综合性RAG平台，为复杂文档的智能问答与内容生成提供一站式解决方案。</font>**](README_mrag.md)
+（注意使用mrag分支）
+![](./docs/img/mrag/mrag_struct.png)
+
 企业内部知识主要包括结构化表格知识和非结构化知识。因此对于结构化表格知识建设了开箱即用的DataAgent能力，主要包括数据治理DGP协议、智能问数和智能诊断分析。
-此外对于不同模态的非结构化知识提供多模态RAG能力。
 
 [**<font color=red>JoyDataAgent：首个开源的包含数据治理DGP协议、智能问数和智能诊断分析的智能体</font>**](README_DataAgent.md)
 （注意使用data_agent分支）
 <img width="1200" height="675" alt="image" src="https://github.com/user-attachments/assets/3a449185-4863-4171-8dda-72cb70b2fa91" />
 
-**多模态RAG：敬请期待**
 ## 简介
 
 当前相关开源agent主要是SDK或者框架，用户还需基于此做进一步的开发，无法直接做到开箱即用。我们开源的JoyAgent-JDGenie是端到端的多Agent产品，对于输入的query或者任务，可以直接回答或者解决。例如用户query"给我做一个最近美元和黄金的走势分析"，JoyAgent-Genie可以直接给出网页版或者PPT版的报告文档。
