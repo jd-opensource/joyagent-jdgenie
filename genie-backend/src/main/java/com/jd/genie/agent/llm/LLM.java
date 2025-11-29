@@ -101,8 +101,8 @@ public class LLM {
                 multimodalContent.add(outerMap);
 
                 Map<String, Object> contentMap = new HashMap<>();
-                outerMap.put("type", "text");
-                outerMap.put("text", message.getContent());
+                contentMap.put("type", "text");
+                contentMap.put("text", message.getContent());
                 multimodalContent.add(contentMap);
 
                 messageMap.put("role", message.getRole().getValue());
