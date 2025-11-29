@@ -13,6 +13,7 @@ import com.jd.genie.agent.util.ThreadUtil;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,24 +93,43 @@ public abstract class BaseAgent {
      * 更新代理记忆
      */
     public void updateMemory(RoleType role, String content, String base64Image, Object... args) {
-        Message message;
-        switch (role) {
-            case USER:
-                message = Message.userMessage(content, base64Image);
-                break;
-            case SYSTEM:
-                message = Message.systemMessage(content, base64Image);
-                break;
-            case ASSISTANT:
-                message = Message.assistantMessage(content, base64Image);
-                break;
-            case TOOL:
-                message = Message.toolMessage(content, (String) args[0], base64Image);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported role type: " + role);
-        }
+        updateMemoryWithImage(role, content, base64Image, null, args);
+    }
+
+    /**
+     * 更新代理记忆（支持 base64 和 URL 图片）
+     */
+    public void updateMemoryWithImage(RoleType role, String content, String base64Image, String imageUrl, Object... args) {
+        Message message = switch (role) {
+            case USER -> createImageMessage(RoleType.USER, content, base64Image, imageUrl);
+            case SYSTEM -> createImageMessage(RoleType.SYSTEM, content, base64Image, imageUrl);
+            case ASSISTANT -> createImageMessage(RoleType.ASSISTANT, content, base64Image, imageUrl);
+            case TOOL -> Message.toolMessage(content, (String) args[0], base64Image);
+        };
         memory.addMessage(message);
+    }
+
+    /**
+     * 创建带图片的消息
+     */
+    private Message createImageMessage(RoleType role, String content, String base64Image, String imageUrl) {
+        // 优先使用 imageUrl
+        if (StringUtils.isNotEmpty(imageUrl)) {
+            return switch (role) {
+                case USER -> Message.userMessageWithImageUrl(content, imageUrl);
+                case ASSISTANT -> Message.assistantMessageWithImageUrl(content, imageUrl);
+                // NOTE: SYSTEM 角色通常用于规范 agent 行为，包含图片并不是一个良好的实践，故不支持 imageUrl
+                default -> throw new IllegalArgumentException("Unsupported role type: " + role);
+            };
+        }
+        
+        // 使用 base64Image
+        return switch (role) {
+            case USER -> Message.userMessage(content, base64Image);
+            case SYSTEM -> Message.systemMessage(content, base64Image);
+            case ASSISTANT -> Message.assistantMessage(content, base64Image);
+            default -> throw new IllegalArgumentException("Unsupported role type: " + role);
+        };
     }
 
     public String executeTool(ToolCall command) {
