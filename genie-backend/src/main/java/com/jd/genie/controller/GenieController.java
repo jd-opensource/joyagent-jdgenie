@@ -191,22 +191,20 @@ public class GenieController {
         // default tool
         List<String> agentToolList = Arrays.asList(genieConfig.getMultiAgentToolListMap()
                 .getOrDefault("default", "search,code,report").split(","));
-        if (!agentToolList.isEmpty()) {
-            if (agentToolList.contains("code")) {
-                CodeInterpreterTool codeTool = new CodeInterpreterTool();
-                codeTool.setAgentContext(agentContext);
-                toolCollection.addTool(codeTool);
-            }
-            if (agentToolList.contains("report")) {
-                ReportTool htmlTool = new ReportTool();
-                htmlTool.setAgentContext(agentContext);
-                toolCollection.addTool(htmlTool);
-            }
-            if (agentToolList.contains("search")) {
-                DeepSearchTool deepSearchTool = new DeepSearchTool();
-                deepSearchTool.setAgentContext(agentContext);
-                toolCollection.addTool(deepSearchTool);
-            }
+        if (agentToolList.contains("code")) {
+            CodeInterpreterTool codeTool = new CodeInterpreterTool();
+            codeTool.setAgentContext(agentContext);
+            toolCollection.addTool(codeTool);
+        }
+        if (agentToolList.contains("report")) {
+            ReportTool htmlTool = new ReportTool();
+            htmlTool.setAgentContext(agentContext);
+            toolCollection.addTool(htmlTool);
+        }
+        if (agentToolList.contains("search")) {
+            DeepSearchTool deepSearchTool = new DeepSearchTool();
+            deepSearchTool.setAgentContext(agentContext);
+            toolCollection.addTool(deepSearchTool);
         }
 
         // mcp tool
