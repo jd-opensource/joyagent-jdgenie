@@ -6,6 +6,7 @@ import json
 import textwrap
 import time
 import traceback
+import json_repair
 
 from calendar import day_name
 from datetime import date
@@ -231,8 +232,8 @@ class ColumnFilterModule:
                                        top_p=0.95,
                                        only_content=True):
                         llm_response += chunk
-                    result_dict = json.loads(self._parse_json_result(llm_response))
-                    
+                    # result_dict = json.loads(self._parse_json_result(llm_response))
+                    result_dict = json_repair.loads(llm_response)
                     if str(result_dict["relatedFlag"]).lower() == "true":
                         columns = table_schema_info.get("schemaList", [])
                         # column_map = {column["columnId"]: column for column in columns}
