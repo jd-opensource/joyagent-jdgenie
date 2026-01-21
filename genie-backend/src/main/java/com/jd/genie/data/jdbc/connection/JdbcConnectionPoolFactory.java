@@ -36,6 +36,7 @@ public class JdbcConnectionPoolFactory implements Serializable {
         switch (connConfig.getJdbcDialect()) {
             case MYSQL:
             case H2:
+            case DORIS:
             case CLICKHOUSE:
                 datasourceWrapper.setDataSource(createHikariDatasource(connConfig, jdbcDialect));
                 break;
