@@ -1,6 +1,6 @@
 import { copyText, downloadFile, formatTimestamp, showMessage } from "@/utils";
 import { keyBy } from "lodash";
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import ActionViewFrame from "./ActionViewFrame";
 import classNames from "classnames";
 import { FileRenderer, HTMLRenderer, PanelItemType, TableRenderer } from "../ActionPanel";
