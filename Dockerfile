@@ -1,5 +1,5 @@
 # 前端构建阶段
-FROM docker.m.daocloud.io/library/node:20-alpine as frontend-builder
+FROM docker.m.daocloud.io/library/node:20-alpine AS frontend-builder
 WORKDIR /app
 RUN npm install -g pnpm
 COPY ui/package.json ./
@@ -9,7 +9,7 @@ COPY ui/ .
 RUN pnpm build
 
 # 后端构建阶段
-FROM docker.m.daocloud.io/library/maven:3.8-openjdk-17 as backend-builder
+FROM docker.m.daocloud.io/library/maven:3.8-openjdk-17 AS backend-builder
 WORKDIR /app
 COPY genie-backend/pom.xml .
 COPY genie-backend/src ./src
@@ -18,7 +18,7 @@ RUN chmod +x build.sh start.sh
 RUN ./build.sh
 
 # Python 环境准备阶段
-FROM docker.m.daocloud.io/library/python:3.11-slim as python-base
+FROM docker.m.daocloud.io/library/python:3.11-slim-bookworm AS python-base
 WORKDIR /app
 
 RUN rm /etc/apt/sources.list.d/* && echo 'deb https://mirrors.aliyun.com/debian/ bookworm main contrib non-free non-free-firmware' \
@@ -39,7 +39,7 @@ RUN apt-get clean && \
 RUN pip install uv
 
 # 最终运行阶段
-FROM docker.m.daocloud.io/library/python:3.11-slim
+FROM docker.m.daocloud.io/library/python:3.11-slim-bookworm
 
 # 安装系统依赖
 RUN rm /etc/apt/sources.list.d/* && echo 'deb https://mirrors.aliyun.com/debian/ bookworm main contrib non-free non-free-firmware' \
