@@ -87,23 +87,32 @@ public class LLM {
 
         for (Message message : messages) {
             Map<String, Object> messageMap = new HashMap<>();
-            // 处理 base64 图像
-            if (message.getBase64Image() != null && !message.getBase64Image().isEmpty()) {
+            // 处理图片（支持 imageUrl 和 base64Image）
+            if (message.hasImage()) {
                 List<Map<String, Object>> multimodalContent = new ArrayList<>();
-                // 创建内层的 image_url Map
+                
+                // 1. 添加文本内容
+                if (message.getContent() != null && !message.getContent().isEmpty()) {
+                    Map<String, Object> textMap = new HashMap<>();
+                    textMap.put("type", "text");
+                    textMap.put("text", message.getContent());
+                    multimodalContent.add(textMap);
+                }
+                
+                // 2. 添加图片内容
+                Map<String, Object> imageMap = new HashMap<>();
+                imageMap.put("type", "image_url");
+                
                 Map<String, String> imageUrlMap = new HashMap<>();
-                imageUrlMap.put("url", "data:image/jpeg;base64," + message.getBase64Image());
-                // 创建外层的 Map
-                Map<String, Object> outerMap = new HashMap<>();
-                outerMap.put("type", "image_url");
-                outerMap.put("image_url", imageUrlMap);
-                // 将创建好的 Map 添加到 multimodalContent 中
-                multimodalContent.add(outerMap);
-
-                Map<String, Object> contentMap = new HashMap<>();
-                outerMap.put("type", "text");
-                outerMap.put("text", message.getContent());
-                multimodalContent.add(contentMap);
+                if (message.isImageUrl()) {
+                    // 使用图片 URL
+                    imageUrlMap.put("url", message.getImageUrl());
+                } else {
+                    // 使用 base64 编码图片
+                    imageUrlMap.put("url", "data:image/jpeg;base64," + message.getBase64Image());
+                }
+                imageMap.put("image_url", imageUrlMap);
+                multimodalContent.add(imageMap);
 
                 messageMap.put("role", message.getRole().getValue());
                 messageMap.put("content", multimodalContent);

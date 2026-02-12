@@ -21,6 +21,7 @@ public class Message {
     private RoleType role;           // 消息角色
     private String content;          // 消息内容
     private String base64Image;      // 图片数据（base64编码）
+    private String imageUrl;         // 图片 URL - 支持远程图片
     private String toolCallId;       // 工具调用ID
     private List<ToolCall> toolCalls; // 工具调用列表
 
@@ -78,5 +79,42 @@ public class Message {
                 .content(content)
                 .toolCalls(toolCalls)
                 .build();
+    }
+
+    /**
+     * 创建带图片 URL 的用户消息
+     */
+    public static Message userMessageWithImageUrl(String content, String imageUrl) {
+        return Message.builder()
+                .role(RoleType.USER)
+                .content(content)
+                .imageUrl(imageUrl)
+                .build();
+    }
+
+    /**
+     * 创建带图片 URL 的助手消息
+     */
+    public static Message assistantMessageWithImageUrl(String content, String imageUrl) {
+        return Message.builder()
+                .role(RoleType.ASSISTANT)
+                .content(content)
+                .imageUrl(imageUrl)
+                .build();
+    }
+
+    /**
+     * 判断消息是否包含图片（base64 或 URL）
+     */
+    public boolean hasImage() {
+        return (base64Image != null && !base64Image.isEmpty()) 
+            || (imageUrl != null && !imageUrl.isEmpty());
+    }
+
+    /**
+     * 判断是否使用 URL 方式的图片
+     */
+    public boolean isImageUrl() {
+        return imageUrl != null && !imageUrl.isEmpty();
     }
 }
