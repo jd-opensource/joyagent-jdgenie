@@ -25,7 +25,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -34,6 +33,8 @@ public class MultiAgentServiceImpl implements IMultiAgentService {
     private GenieConfig genieConfig;
     @Autowired
     private Map<AgentType, AgentResponseHandler> handlerMap;
+    @Autowired
+    private OkHttpClient okHttpClient;
 
     @Override
     public AutoBotsResult searchForAgentRequest(GptQueryReq gptQueryReq, SseEmitter sseEmitter) {
@@ -51,21 +52,21 @@ public class MultiAgentServiceImpl implements IMultiAgentService {
         return ChateiUtils.toAutoBotsResult(agentRequest, AutoBotsResultStatus.loading.name());
     }
 
-    public void handleMultiAgentRequest(AgentRequest autoReq,SseEmitter sseEmitter) {
+    public void handleMultiAgentRequest(AgentRequest autoReq, SseEmitter sseEmitter) {
         long startTime = System.currentTimeMillis();
         Request request = buildHttpRequest(autoReq);
         log.info("{} agentRequest:{}", autoReq.getRequestId(), JSON.toJSONString(request));
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(60, TimeUnit.SECONDS) // 设置连接超时时间为 60 秒
-                .readTimeout(genieConfig.getSseClientReadTimeout(), TimeUnit.SECONDS)    // 设置读取超时时间为 60 秒
-                .writeTimeout(1800, TimeUnit.SECONDS)   // 设置写入超时时间为 60 秒
-                .callTimeout(genieConfig.getSseClientConnectTimeout(), TimeUnit.SECONDS)    // 设置调用超时时间为 60 秒
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
+        
+        // 使用单例 OkHttpClient，避免重复创建，提高性能和资源利用率
+        okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                log.error("onFailure {}", e.getMessage(), e);
+                log.error("{} HTTP request failed", autoReq.getRequestId(), e);
+                try {
+                    sseEmitter.completeWithError(e);
+                } catch (Exception ex) {
+                    log.error("{} Failed to send error to SSE emitter", autoReq.getRequestId(), ex);
+                }
             }
 
             @Override
@@ -78,17 +79,17 @@ public class MultiAgentServiceImpl implements IMultiAgentService {
                     return;
                 }
 
-                try {
+                // 使用 try-with-resources 确保流被正确关闭，避免资源泄露
+                try (BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(responseBody.byteStream()))) {
+                    
                     if (!response.isSuccessful()) {
-                        log.error("{}, response body is failed: {}", autoReq.getRequestId(), responseBody.string());
+                        log.error("{} HTTP response failed, status code: {}", 
+                                autoReq.getRequestId(), response.code());
                         return;
                     }
 
                     String line;
-                    BufferedReader reader = new BufferedReader(
-                            new InputStreamReader(responseBody.byteStream())
-                    );
-
                     while ((line = reader.readLine()) != null) {
                         if (!line.startsWith("data:")) {
                             continue;
@@ -96,7 +97,7 @@ public class MultiAgentServiceImpl implements IMultiAgentService {
 
                         String data = line.substring(5);
                         if (data.equals("[DONE]")) {
-                            log.info("{} data equals with [DONE] {}:", autoReq.getRequestId(), data);
+                            log.info("{} data equals with [DONE]", autoReq.getRequestId());
                             break;
                         }
 
@@ -111,7 +112,7 @@ public class MultiAgentServiceImpl implements IMultiAgentService {
                         AgentResponse agentResponse = JSON.parseObject(data, AgentResponse.class);
                         AgentType agentType = AgentType.fromCode(autoReq.getAgentType());
                         AgentResponseHandler handler = handlerMap.get(agentType);
-                        GptProcessResult result = handler.handle(autoReq, agentResponse,agentRespList, eventResult);
+                        GptProcessResult result = handler.handle(autoReq, agentResponse, agentRespList, eventResult);
                         sseEmitter.send(result);
                         if (result.isFinished()) {
                             // 记录任务执行时间
@@ -119,8 +120,16 @@ public class MultiAgentServiceImpl implements IMultiAgentService {
                             sseEmitter.complete();
                         }
                     }
-                }catch (Exception e) {
-                    log.error("", e);
+                } catch (Exception e) {
+                    log.error("{} Error processing SSE response", autoReq.getRequestId(), e);
+                    try {
+                        sseEmitter.completeWithError(e);
+                    } catch (Exception ex) {
+                        log.error("{} Failed to send error to SSE emitter", autoReq.getRequestId(), ex);
+                    }
+                } finally {
+                    // 确保 Response 被关闭
+                    response.close();
                 }
             }
         });
