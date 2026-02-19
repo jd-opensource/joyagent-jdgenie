@@ -31,7 +31,7 @@
 
 在公开数据集DoubleBench上，我们对比测评了MDocAgent、Colqwen-gen、ViDoRAG、M3DOCRAG等多模态问答系统。
 
-最终答案的准确性采用LLM作为评判标准进行评估（https://arxiv.org/abs/2306.05685）
+最终答案的准确性采用LLM作为评判标准进行评估（[https://arxiv.org/abs/2306.05685](https://arxiv.org/abs/2306.05685)）
 。 GPT-4o根据0到10的等级对生成的答案与真实答案的正确性进行评分。得分不低于7分的答案为正确，不高于3分的答案为错误，其余答案为部分正确。
 
 测评结果如下：**JoyAgent的正确率达到76.2%,优于当前其他多模态问答系统。**
@@ -44,11 +44,11 @@
 | ViDoRAG      | 0.623     | 0.144     | 0.233 |
 | M3DOCRAG     | 0.538     | 0.138     | 0.324 |
 
-- MDocAgent： 北卡罗来纳大学-2025年（https://arxiv.org/abs/2503.13964）
+- MDocAgent： 北卡罗来纳大学-2025年（[https://arxiv.org/abs/2503.13964](https://arxiv.org/abs/2503.13964)）
 
-- ViDoRAG：阿里巴巴NLP实验室-2025年（https://arxiv.org/abs/2502.18017）
+- ViDoRAG：阿里巴巴NLP实验室-2025年（[https://arxiv.org/abs/2502.18017](https://arxiv.org/abs/2502.18017)）
 
-- M3DOCRAG：北卡罗来纳大学-2025年（https://arxiv.org/abs/2411.04952）
+- M3DOCRAG：北卡罗来纳大学-2025年（[https://arxiv.org/abs/2411.04952](https://arxiv.org/abs/2411.04952)）
 
 - Colqwen-gen：参照组，结果由gpt-4o直接回复生成（不采用RAG）。
 
