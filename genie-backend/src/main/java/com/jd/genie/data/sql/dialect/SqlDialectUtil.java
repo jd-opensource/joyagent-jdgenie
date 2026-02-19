@@ -10,6 +10,7 @@ public class SqlDialectUtil {
         return switch (dialectEnum) {
             case H2,MYSQL -> MysqlCustomSqlDialect.DEFAULT;
             case CLICKHOUSE -> ClickHouseSqlDialect2.DEFAULT;
+            case DORIS -> DorisSqlDialect.DEFAULT;
         };
     }
 }
