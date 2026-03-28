@@ -275,8 +275,8 @@ Ultra-detailed guide reference: [Step by Step](./Deploy.md)
 #### Option 2: One-Command Launch (Recommended)
 Directly start all services via shell:
 ```
-sh check_dep_port.sh # Verify all dependencies and port occupancy
-sh Genie_start.sh  # Launch services directly; restart this script after configuration changes (terminate all services with Control+C)
+bash check_dep_port.sh # Verify all dependencies and port occupancy
+bash Genie_start.sh  # Launch services directly; restart this script after configuration changes (terminate all services with Control+C)
 ```
 For deployment guidance, refer to the demonstration video:【joyagent-jdgenie部署演示】 https://www.bilibili.com/video/BV1Py8Yz4ELK/?vd_source=a5601a346d433a490c55293e76180c9d
 
@@ -297,7 +297,7 @@ mcp_server_url: "http://ip1:port1/sse,http://ip2:port2/sse"
 #### Start Service:
 
 ```bash
-sh start_genie.sh
+bash start_genie.sh
 ```
 
 #### Usage Example:
@@ -352,7 +352,7 @@ toolCollection.addTool(weatherTool);
 #### Start service
 
 ```bash
-sh start_genie.sh
+bash start_genie.sh
 ```
 
 
