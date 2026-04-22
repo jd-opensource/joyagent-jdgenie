@@ -16,7 +16,7 @@ load_dotenv()
 
 
 def retrieved_cells_dict2map_key_val(retrieved_cells_dict, _few_shot_seprator):
-    # key 去重，value 不会有重复的
+    # 按 modelCode-columnId 聚合ES召回的多条文档，将value拼接
     _map = {}
     for key, item in retrieved_cells_dict.items():
         assert "columnId" in item and "modelCode" in item, item
@@ -137,6 +137,26 @@ class Retriever:
         
         return schema_list
     
+    @staticmethod
+    def _dedup_fewshot(fewshot_str):
+        """对合并后的fewShot字符串进行去重
+        
+        fewShot可能包含 ',' 和 ';' 两种分隔符（Qdrant用逗号，ES用分号），
+        统一拆分后去重，再用逗号拼回。
+        """
+        if not fewshot_str:
+            return ""
+        import re
+        values = re.split(r'[;,]', fewshot_str)
+        seen = set()
+        unique_values = []
+        for v in values:
+            v_stripped = v.strip()
+            if v_stripped and v_stripped not in seen:
+                seen.add(v_stripped)
+                unique_values.append(v_stripped)
+        return ",".join(unique_values)
+
     def qd_es_merge(self, retrieved_cells, retrieved_columns):
         # retrieved_cells
         _few_shot_seprator = ";"
@@ -155,6 +175,8 @@ class Retriever:
                 retrieved_columns_schema_map[key] = schema_val["schema"]
                 _few_shot = schema_val["value"]
             
+            # 去重（ES召回value可能与Qdrant fewShot存在重叠）
+            _few_shot = self._dedup_fewshot(_few_shot)
             retrieved_columns_schema_map[key]["fewShot"] = _few_shot
             
         retrieved_columns_schema_list = [val for key, val in retrieved_columns_schema_map.items()]
