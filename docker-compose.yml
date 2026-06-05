@@ -1,0 +1,37 @@
+# JoyAgent-JDGenie 一体化 Docker 部署
+# 单镜像内含 4 个服务:
+#   - 3000  前端 UI（浏览器访问入口）
+#   - 8080  Java 后端 API
+#   - 1601  Python tool 服务（code interpreter / deep search / report）
+#   - 8188  MCP client
+services:
+  genie:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: joyagent-genie:latest
+    container_name: joyagent-genie
+    ports:
+      - "3000:3000"   # 前端 UI
+      - "8080:8080"   # Java 后端 API
+      - "1601:1601"   # Python tool 服务
+      - "8188:8188"   # MCP client
+    environment:
+      TZ: Asia/Shanghai
+      # 默认使用镜像内 .env_template / application.yml 中已配置的 DeepSeek。
+      # 如需覆盖模型 Key,取消下面两行注释并填入:
+      # OPENAI_API_KEY: "your-api-key"
+      # OPENAI_BASE_URL: "https://api.deepseek.com"
+    volumes:
+      # 持久化 tool 服务数据目录
+      - genie-data:/data/genie-tool
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  genie-data:

@@ -1,0 +1,38 @@
+# 版本控制
+.git
+.gitignore
+.gitattributes
+
+# 前端依赖与产物（构建阶段会重新生成）
+**/node_modules
+ui/dist
+ui/.vite
+
+# 后端构建产物（构建阶段会重新生成）
+genie-backend/target
+**/*startup.log
+
+# Python 虚拟环境与缓存（构建阶段会重新 uv sync）
+**/.venv
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/.pytest_cache
+**/.ruff_cache
+
+# 实际密钥文件（保留 .env_template，仅忽略真实 .env）
+genie-tool/.env
+genie-client/.env
+
+# 运行时数据
+**/file_db_dir
+**/autobots.db
+**/*.log
+
+# IDE / 系统文件
+.idea
+.vscode
+**/.DS_Store
+
+# 文档（不影响运行）
+docs
