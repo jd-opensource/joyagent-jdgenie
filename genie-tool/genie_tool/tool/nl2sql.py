@@ -27,7 +27,7 @@ class NL2SQLAgent:
         self.think_llm_name = os.getenv("THINK_MODEL_NAME")
         self.default_model: str = "gpt-4.1"
         self.temperature: float = 0.0
-        self.top_p: float = 0.0
+        self.top_p: float = 1.0
 
     @timer(key="rewrite_query")
     async def _text_to_rewrite(self, request_id,
