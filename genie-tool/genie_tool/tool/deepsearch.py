@@ -109,7 +109,7 @@ class DeepSearch:
                 break
 
             # 推理验证是否需要继续搜索
-            reasoning_result = search_reasoning(
+            reasoning_result = await search_reasoning(
                 request_id=request_id,
                 query=query,
                 content=self.search_docs_str(os.getenv("SEARCH_REASONING_MODEL")),
