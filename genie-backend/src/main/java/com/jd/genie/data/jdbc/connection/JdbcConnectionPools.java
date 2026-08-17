@@ -96,7 +96,12 @@ public class JdbcConnectionPools {
 
         // 创建新的数据源
         DatasourceWrapper newWrapper = createNewDatasource(config);
-        pools.put(poolId, newWrapper);
+        DatasourceWrapper oldWrapper = pools.put(poolId, newWrapper);
+
+        // 关闭被替换的旧连接池，避免物理连接与线程泄漏
+        if (oldWrapper != null && oldWrapper != newWrapper) {
+            oldWrapper.close();
+        }
 
         log.info("数据源刷新完成 poolId {}", poolId);
         return newWrapper;
